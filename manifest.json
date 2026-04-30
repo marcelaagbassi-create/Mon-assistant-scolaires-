@@ -1,0 +1,67 @@
+{
+  "name": "Mon Assistant Scolaires",
+  "short_name": "Assi Scolaires",
+  "description": "L'assistant IA des élèves ivoiriens — réviser, apprendre, réussir",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1C2340",
+  "theme_color": "#FF6B35",
+  "orientation": "portrait",
+  "lang": "fr",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "icon-16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "apple touch icon"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Parler à Amina",
+      "short_name": "Amina IA",
+      "description": "Ouvrir l'assistante IA",
+      "url": "/?action=amina",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Mes révisions",
+      "short_name": "Révisions",
+      "description": "Accéder aux révisions",
+      "url": "/?page=revision",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
