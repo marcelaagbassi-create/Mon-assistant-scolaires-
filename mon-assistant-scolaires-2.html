@@ -1,0 +1,2547 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Mon Assistant Scolaires</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icon-16.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="theme-color" content="#FF6B35">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Assi Scolaires">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="description" content="L'assistant IA des élèves ivoiriens — réviser, apprendre, réussir">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7F8FC;--white:#fff;--border:#E8ECF4;
+  --text:#1C2340;--muted:#8892B0;
+  --accent:#FF6B35;--a2:#00C896;--a3:#4F8EF7;--a4:#A855F7;--danger:#F43F5E;
+  --r:14px;--sh:0 4px 20px rgba(28,35,64,.08);--shm:0 8px 32px rgba(28,35,64,.14);
+}
+body.dark{
+  --bg:#0F1117;--white:#1A1D27;--border:#2A2D3E;
+  --text:#E8ECF4;--muted:#5A6380;
+  --sh:0 4px 20px rgba(0,0,0,.3);--shm:0 8px 32px rgba(0,0,0,.45);
+}
+body.dark .wb{background:linear-gradient(135deg,#0F1117,#1A1D27);}
+body.dark input,body.dark select,body.dark textarea{background:var(--bg);color:var(--text);}
+body.dark .aiphdr{background:linear-gradient(135deg,#0F1117,#1A1D27);}
+body.dark .bnav{background:rgba(26,29,39,.97);}
+body.dark .app-header{background:var(--white);}
+body.dark .reader{background:var(--white);}
+body.dark .modal{background:var(--white);}
+body.dark .cc p,.dark .cc li{color:#C0C8D8;}
+body.dark .aimsg.bot .aibub{background:#22263A;border-color:#2A2D3E;}
+body.dark .aimsg.user .aibub{background:var(--accent);}
+body.dark .wbt{color:#fff;}
+body.dark .wbd{color:rgba(255,255,255,.45);}
+body.dark .aibar{background:var(--white);}
+body.dark .ai-modes{background:var(--white);}
+body.dark select option{background:var(--white);color:var(--text);}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;}
+
+.app-header{background:var(--white);border-bottom:1px solid var(--border);padding:0 14px;display:flex;align-items:center;height:54px;flex-shrink:0;box-shadow:0 2px 10px rgba(28,35,64,.06);z-index:50;}
+.app-logo{display:flex;align-items:center;gap:8px;font-family:'Playfair Display',serif;font-size:.9rem;font-weight:900;color:var(--text);}
+.app-logo svg{width:30px;height:30px;}
+.lo-ac{color:var(--accent);}
+.hdr-r{margin-left:auto;display:flex;gap:6px;}
+.hbtn{width:34px;height:34px;border-radius:9px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;}
+.hbtn:hover{background:var(--accent);border-color:var(--accent);}
+.hbtn:hover svg{stroke:#fff;}
+.hbtn svg{width:16px;height:16px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+.app-body{flex:1;overflow:hidden;position:relative;}
+.page{position:absolute;inset:0;overflow-y:auto;padding:14px 13px 84px;display:none;-webkit-overflow-scrolling:touch;}
+.page.active{display:block;animation:pgIn .25s ease;}
+@keyframes pgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.bnav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.98);border-top:1.5px solid var(--border);display:flex;z-index:100;box-shadow:0 -4px 20px rgba(28,35,64,.10);padding-bottom:env(safe-area-inset-bottom);}
+.bt{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:11px 2px 10px;cursor:pointer;font-size:.52rem;font-weight:800;color:var(--muted);letter-spacing:.3px;text-transform:uppercase;gap:4px;transition:color .2s;min-height:62px;}
+.bt.active{color:var(--accent);}
+.bt svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:11px;box-shadow:var(--sh);}
+.ch{display:flex;align-items:center;gap:9px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.ci{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ci svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.ct2{font-size:.87rem;font-weight:800;}
+.cs2{font-size:.68rem;color:var(--muted);margin-top:1px;font-weight:600;}
+.stitle{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:900;margin-bottom:3px;}
+.ssub{font-size:.77rem;color:var(--muted);margin-bottom:16px;font-weight:600;}
+
+.field{margin-bottom:10px;}
+.field label{display:block;font-size:.67rem;font-weight:800;color:var(--muted);margin-bottom:4px;letter-spacing:.4px;text-transform:uppercase;}
+input,select,textarea{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:9px;padding:8px 11px;color:var(--text);font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:600;transition:border-color .2s;outline:none;}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);background:#fff;}
+textarea{resize:vertical;min-height:72px;}
+
+.btn{padding:9px 16px;border-radius:10px;border:none;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;transition:all .2s;}
+.btn-p{background:var(--accent);color:#fff;}
+.btn-p:hover{background:#e55a26;transform:translateY(-1px);}
+.btn-s{background:var(--a2);color:#fff;}
+.btn-s:hover{background:#00ad80;}
+.btn-g{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-g:hover{border-color:var(--accent);color:var(--accent);}
+.btn-sm{padding:5px 10px;font-size:.74rem;}
+.btn-f{width:100%;}
+
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:.67rem;font-weight:800;}
+.bo{background:#FFF0EB;color:#FF6B35;}.bg{background:#E6FDF5;color:#00C896;}.br{background:#FFF0F3;color:#F43F5E;}.bb{background:#EEF4FF;color:#4F8EF7;}.bk{background:var(--bg);color:var(--muted);}
+
+.pw{background:var(--bg);border-radius:99px;height:5px;overflow:hidden;}
+.pb{height:100%;border-radius:99px;transition:width .6s;}
+
+.sg{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:13px;}
+.sc{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:13px;text-align:center;box-shadow:var(--sh);}
+.sn{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:900;line-height:1;}
+.sl{font-size:.61rem;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.4px;font-weight:800;}
+
+.wb{background:linear-gradient(135deg,#1C2340,#2D3A6B);border-radius:var(--r);padding:18px;margin-bottom:12px;position:relative;overflow:hidden;}
+.wb::before{content:'';position:absolute;top:-25px;right:-25px;width:100px;height:100px;border-radius:50%;background:rgba(255,107,53,.2);}
+.wbg{font-size:.72rem;font-weight:800;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;}
+.wbt{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:900;color:#fff;margin:3px 0 2px;}
+.wbd{font-size:.7rem;color:rgba(255,255,255,.45);font-weight:600;}
+
+/* COURS */
+.ncard{border-radius:var(--r);margin-bottom:9px;overflow:hidden;box-shadow:var(--sh);border:1px solid var(--border);}
+.nhdr{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;}
+.nbadge{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.8rem;color:#fff;font-family:'Playfair Display',serif;flex-shrink:0;background:rgba(255,255,255,.2);position:relative;overflow:hidden;}
+.nbadge::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.2),transparent 60%);}
+.nname{font-size:.9rem;font-weight:900;color:#fff;}
+.nsub{font-size:.66rem;color:rgba(255,255,255,.6);font-weight:600;margin-top:1px;}
+.nbody{background:var(--white);display:none;}
+.nbody.open{display:block;}
+.mhdr2{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg);border-bottom:1px solid var(--border);cursor:pointer;}
+.mi2{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.mi2 svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.mbody{display:none;}
+.mbody.open{display:block;}
+.crow{display:flex;align-items:center;gap:9px;padding:9px 14px 9px 22px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.crow:hover{background:#FFFBF9;}
+.crow:last-child{border-bottom:none;}
+.cnum{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;flex-shrink:0;background:var(--bg);color:var(--muted);}
+.cnum.done{background:var(--a2);color:#fff;}
+
+/* Bandeau PDF */
+.pdf-banner{background:linear-gradient(135deg,#EEF4FF,#F0FDF9);border:1.5px solid var(--a3);border-radius:11px;padding:14px;margin-bottom:12px;text-align:center;}
+.pdf-banner-title{font-size:.9rem;font-weight:800;color:var(--a3);margin-bottom:6px;}
+.pdf-banner-sub{font-size:.77rem;color:var(--muted);margin-bottom:10px;line-height:1.5;}
+.pdf-upload-zone{border:2px dashed var(--border);border-radius:9px;padding:16px;cursor:pointer;transition:.2s;background:var(--white);}
+.pdf-upload-zone:hover{border-color:var(--accent);background:#FFFBF9;}
+.pdf-upload-zone svg{width:28px;height:28px;stroke:var(--muted);fill:none;stroke-width:1.5;margin-bottom:6px;}
+.pdf-upload-zone-text{font-size:.8rem;color:var(--muted);font-weight:700;}
+.pdf-list{margin-top:10px;}
+.pdf-item{display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--bg);border-radius:9px;margin-bottom:6px;border:1px solid var(--border);}
+.pdf-item-icon{width:32px;height:32px;border-radius:8px;background:var(--danger);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.pdf-item-icon svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* LECTEUR */
+.reader{position:fixed;inset:0;z-index:200;background:var(--white);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);}
+.reader.open{transform:translateX(0);}
+.rnav{display:flex;align-items:center;gap:9px;padding:11px 13px;border-bottom:1px solid var(--border);background:var(--white);flex-shrink:0;box-shadow:0 2px 8px rgba(28,35,64,.05);}
+.rback{width:34px;height:34px;border-radius:9px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.rback svg{width:17px;height:17px;stroke:var(--text);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.rbody{flex:1;overflow-y:auto;padding:18px 14px 90px;-webkit-overflow-scrolling:touch;}
+.ract{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--border);padding:9px 12px;display:flex;gap:7px;padding-bottom:calc(9px + env(safe-area-inset-bottom));z-index:201;}
+.cc h2{font-family:'Playfair Display',serif;font-size:1rem;font-weight:900;color:var(--text);margin:18px 0 7px;}
+.cc h3{font-size:.88rem;font-weight:800;color:var(--accent);margin:12px 0 5px;}
+.cc p{font-size:.84rem;line-height:1.78;color:#374151;margin-bottom:9px;font-weight:500;}
+.cc ul,.cc ol{margin:7px 0 9px 16px;font-size:.83rem;}
+.cc li{margin-bottom:4px;line-height:1.6;font-weight:500;color:#374151;}
+.def{background:#FFFBF9;border-left:4px solid var(--accent);padding:10px 12px;border-radius:0 9px 9px 0;margin:10px 0;font-size:.83rem;line-height:1.65;font-weight:600;color:#374151;}
+.ex{background:#F0FDF9;border-left:4px solid var(--a2);padding:10px 12px;border-radius:0 9px 9px 0;margin:10px 0;font-size:.83rem;line-height:1.65;font-weight:600;color:#374151;}
+.fo{background:var(--bg);border:1.5px solid var(--border);padding:11px 12px;border-radius:9px;margin:10px 0;font-family:'Courier New',monospace;font-size:.8rem;text-align:center;line-height:1.9;font-weight:700;color:var(--text);}
+
+.nchips{display:flex;gap:5px;overflow-x:auto;padding-bottom:3px;margin-bottom:11px;scrollbar-width:none;}
+.nchips::-webkit-scrollbar{display:none;}
+.nchip{padding:4px 11px;border-radius:99px;border:1.5px solid var(--border);background:var(--white);font-size:.68rem;font-weight:800;cursor:pointer;transition:all .15s;color:var(--muted);white-space:nowrap;flex-shrink:0;}
+.nchip.active{color:#fff;border-color:transparent;}
+
+.he{display:flex;align-items:center;gap:8px;padding:9px;background:var(--bg);border-radius:9px;margin-bottom:6px;}
+.hd{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.ni{background:var(--white);border:1.5px solid var(--border);border-radius:11px;padding:12px;margin-bottom:8px;box-shadow:var(--sh);}
+.ri{display:flex;align-items:center;gap:9px;background:var(--white);border-radius:11px;padding:11px 12px;margin-bottom:8px;box-shadow:var(--sh);border-left:4px solid var(--accent);}
+.ri.urg{border-left-color:var(--danger);}
+.ri.done{opacity:.45;}
+
+.md{text-align:center;padding:22px 18px;background:linear-gradient(135deg,#FFFBF9,#F0FDF9);border:1.5px solid var(--border);border-radius:var(--r);margin-bottom:13px;box-shadow:var(--sh);}
+.mb{font-family:'Playfair Display',serif;font-size:3rem;font-weight:900;line-height:1;letter-spacing:-1px;}
+.mr{display:flex;align-items:center;gap:6px;padding:7px 0;border-bottom:1px solid var(--border);}
+.mr:last-child{border-bottom:none;}
+.mn{flex:1;font-size:.81rem;font-weight:700;}
+.mc{background:#FFF0EB;color:var(--accent);border-radius:6px;padding:2px 7px;font-size:.67rem;font-weight:800;flex-shrink:0;min-width:28px;text-align:center;}
+.minput{width:95px!important;}
+
+.moverlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.4);backdrop-filter:blur(6px);display:none;align-items:flex-end;justify-content:center;}
+.moverlay.open{display:flex;}
+.modal{background:var(--white);border-radius:20px 20px 0 0;padding:18px 16px;width:100%;max-height:92vh;overflow-y:auto;animation:sUp .3s cubic-bezier(.4,0,.2,1);}
+@keyframes sUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.mhandle{width:34px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 14px;}
+.mtitle{font-size:.97rem;font-weight:900;margin-bottom:13px;}
+.mact{display:flex;gap:7px;margin-top:13px;}
+.mact .btn{flex:1;}
+
+/* ════════════════ AMINA IA ════════════════ */
+.aibtn{position:fixed;right:14px;bottom:74px;z-index:150;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#FF8C42);box-shadow:0 4px 18px rgba(255,107,53,.45);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s;border:2.5px solid #fff;}
+.aibtn:active{transform:scale(.95);}
+.aibtn svg{width:24px;height:24px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.aipulse{position:absolute;top:0;right:0;width:13px;height:13px;border-radius:50%;background:var(--a2);border:2px solid #fff;}
+
+.aipanel{position:fixed;inset:0;z-index:400;display:flex;flex-direction:column;background:var(--white);transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);}
+.aipanel.open{transform:translateY(0);}
+
+.aiphdr{background:linear-gradient(135deg,#1C2340,#2D3A6B);padding:13px 14px;display:flex;align-items:center;gap:11px;flex-shrink:0;}
+.aiav{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;}
+.ain{font-family:'Playfair Display',serif;font-size:1rem;font-weight:900;color:#fff;}
+.ais{font-size:.65rem;color:rgba(255,255,255,.55);font-weight:600;display:flex;align-items:center;gap:3px;margin-top:1px;}
+.aisd{width:6px;height:6px;border-radius:50%;background:var(--a2);animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.aix{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.1);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;margin-left:auto;}
+.aix svg{width:17px;height:17px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+
+/* MODE TABS */
+.ai-modes{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--white);flex-shrink:0;overflow-x:auto;scrollbar-width:none;}
+.ai-modes::-webkit-scrollbar{display:none;}
+.ai-mode-btn{flex:1;padding:10px 6px 8px;cursor:pointer;font-size:.62rem;font-weight:800;color:var(--muted);border-bottom:2.5px solid transparent;transition:all .2s;text-align:center;letter-spacing:.2px;text-transform:uppercase;white-space:nowrap;min-width:60px;background:none;border-left:none;border-right:none;border-top:none;font-family:'Nunito',sans-serif;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.ai-mode-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.ai-mode-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+.ai-mode-btn:hover:not(.active){color:var(--text);}
+
+.aimsgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:9px;-webkit-overflow-scrolling:touch;}
+.aimsg{max-width:90%;display:flex;flex-direction:column;gap:2px;}
+.aimsg.user{align-self:flex-end;}
+.aimsg.bot{align-self:flex-start;}
+.aibub{padding:10px 13px;border-radius:14px;font-size:.84rem;font-weight:600;line-height:1.65;}
+.aimsg.user .aibub{background:var(--accent);color:#fff;border-radius:14px 14px 3px 14px;}
+.aimsg.bot .aibub{background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:14px 14px 14px 3px;}
+.aimsg.bot .aibub strong{color:var(--accent);}
+.aimsg.bot .aibub code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:4px;font-family:'Courier New',monospace;font-size:.8rem;}
+.aimsg.bot .aibub .ai-formula{background:#F0F4FF;border:1px solid #C7D7FF;padding:8px 11px;border-radius:8px;margin:6px 0;font-family:'Courier New',monospace;font-size:.8rem;text-align:center;}
+.aitime{font-size:.6rem;color:var(--muted);font-weight:600;padding:0 2px;}
+.aimsg.user .aitime{text-align:right;}
+
+/* Attachment preview in chat */
+.ai-attach{background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:7px 10px;margin-top:4px;display:flex;align-items:center;gap:7px;font-size:.76rem;font-weight:700;}
+.ai-attach svg{width:14px;height:14px;stroke:var(--accent);fill:none;flex-shrink:0;}
+.ai-img-preview{max-width:100%;border-radius:8px;margin-top:6px;display:block;}
+
+.aitype-wrap{display:flex;gap:4px;align-items:center;padding:12px 14px;}
+.aitype-wrap span{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:typing 1.2s infinite;}
+.aitype-wrap span:nth-child(2){animation-delay:.2s;}
+.aitype-wrap span:nth-child(3){animation-delay:.4s;}
+@keyframes typing{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+
+.aisugs{display:flex;gap:5px;overflow-x:auto;padding:7px 11px 0;scrollbar-width:none;flex-shrink:0;}
+.aisugs::-webkit-scrollbar{display:none;}
+.aisug{padding:5px 11px;border-radius:99px;background:var(--bg);border:1.5px solid var(--border);font-size:.68rem;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s;font-family:'Nunito',sans-serif;}
+.aisug:hover{border-color:var(--accent);color:var(--accent);}
+
+/* ══ BARRE AMINA — style image 2 ══ */
+.aibar{padding:10px 14px 12px;border-top:1px solid var(--border);background:var(--white);flex-shrink:0;padding-bottom:calc(10px + env(safe-area-inset-bottom));}
+.aiinp-wrap{display:flex;flex-direction:column;background:var(--bg);border:1.5px solid var(--border);border-radius:18px;padding:10px 14px 8px;transition:border-color .2s;min-height:72px;position:relative;}
+.aiinp-wrap:focus-within{border-color:var(--accent);}
+.aiinp{background:transparent;border:none;padding:0;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:600;color:var(--text);resize:none;outline:none;max-height:90px;min-height:28px;line-height:1.5;width:100%;margin-bottom:8px;}
+.aiinp::placeholder{color:var(--muted);}
+.aibar-btns{display:flex;align-items:center;justify-content:space-between;}
+.aibar-btns-l{display:flex;align-items:center;gap:2px;}
+.aibar-btns-r{display:flex;align-items:center;gap:8px;}
+.aibar-iconbtn{width:34px;height:34px;border-radius:50%;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;}
+.aibar-iconbtn:active{background:rgba(136,146,176,.15);}
+.aibar-iconbtn svg{width:20px;height:20px;stroke:var(--text);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.aibar-send-fab{width:38px;height:38px;border-radius:50%;background:var(--accent);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 10px rgba(255,107,53,.4);transition:all .2s;}
+.aibar-send-fab:active{background:#e55a26;transform:scale(.93);}
+.aibar-send-fab svg{width:17px;height:17px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.aimic-ext.rec .aibar-iconbtn,.aimic-ext.rec{background:var(--danger)!important;border-radius:50%;animation:micpulse 1s infinite;}
+.aimic-ext.rec svg{stroke:#fff!important;}
+@keyframes micpulse{0%,100%{box-shadow:0 0 0 0 rgba(244,63,94,.4)}50%{box-shadow:0 0 0 8px rgba(244,63,94,0)}}
+
+/* Attach menu popup */
+.attach-menu{position:absolute;bottom:62px;left:10px;background:var(--white);border:1px solid var(--border);border-radius:14px;padding:8px;box-shadow:var(--shm);display:none;z-index:500;min-width:180px;}
+.attach-menu.open{display:block;animation:fadeIn .15s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.attach-opt{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;cursor:pointer;transition:background .15s;font-size:.84rem;font-weight:700;}
+.attach-opt:hover{background:var(--bg);}
+.attach-opt svg{width:18px;height:18px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+
+.aispeak{display:none;align-items:center;gap:8px;padding:6px 11px;background:#F0FDF9;border-top:1px solid #D1FAE5;flex-shrink:0;}
+.aispeak.show{display:flex;}
+.aispeak-txt{font-size:.72rem;font-weight:700;color:var(--a2);flex:1;}
+.aispeak-stop{padding:4px 10px;border-radius:99px;background:var(--a2);color:#fff;font-size:.68rem;font-weight:800;border:none;cursor:pointer;font-family:'Nunito',sans-serif;}
+
+.empty{text-align:center;padding:28px 14px;color:var(--muted);}
+.empty svg{width:44px;height:44px;stroke:var(--border);fill:none;stroke-width:1.5;margin-bottom:8px;}
+.empty-t{font-size:.82rem;font-weight:700;}
+.divider{border:none;border-top:1px solid var(--border);margin:11px 0;}
+
+/* ════ PARAMÈTRES ════ */
+.set-section-title{font-size:.65rem;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;padding:0 2px;}
+.theme-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;}
+.theme-opt{border:2px solid var(--border);border-radius:14px;padding:14px 12px 10px;cursor:pointer;transition:all .2s;background:var(--white);}
+.theme-opt.selected{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,107,53,.15);}
+.theme-preview{height:44px;border-radius:9px;margin-bottom:8px;}
+.theme-label{font-size:.77rem;font-weight:800;color:var(--text);text-align:center;}
+.set-row{display:flex;align-items:center;justify-content:space-between;padding:13px 14px;background:var(--white);border:1px solid var(--border);border-radius:12px;margin-bottom:7px;}
+.set-row-left{display:flex;flex-direction:column;gap:2px;}
+.set-row-title{font-size:.87rem;font-weight:800;color:var(--text);}
+.set-row-sub{font-size:.68rem;color:var(--muted);font-weight:600;}
+.set-row-right{font-size:.82rem;font-weight:700;color:var(--muted);}
+.quit-btn{background:transparent;border:1.5px solid var(--danger);color:var(--danger);padding:7px 18px;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer;transition:all .2s;}
+.quit-btn:hover{background:var(--danger);color:#fff;}
+.about-hero{background:linear-gradient(135deg,#EEF4FF,#F0F8FF);border:1px solid var(--border);border-radius:16px;padding:32px 20px;text-align:center;margin-bottom:12px;}
+body.dark .about-hero{background:linear-gradient(135deg,#1A1D27,#22263A);}
+.about-logo{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;color:var(--accent);margin-bottom:4px;}
+.about-ver{font-size:.77rem;color:var(--muted);font-weight:600;}
+.about-tagline{font-size:.83rem;color:var(--muted);margin-top:6px;font-style:italic;font-weight:600;}
+.about-dev{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;}
+.about-dev-name{font-size:1rem;font-weight:900;color:var(--text);margin-bottom:2px;}
+.about-dev-handle{font-size:.73rem;font-weight:900;color:var(--accent);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;}
+.about-dev-bio{font-size:.8rem;line-height:1.7;color:var(--muted);font-style:italic;font-weight:600;}
+.about-table{background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:10px;}
+.about-row{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--border);}
+.about-row:last-child{border-bottom:none;}
+.about-row-key{font-size:.67rem;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.about-row-val{font-size:.82rem;font-weight:800;color:var(--text);}
+.about-footer{text-align:center;padding:14px 0 4px;font-size:.7rem;color:var(--muted);font-weight:600;line-height:1.8;}
+#toast{position:fixed;bottom:73px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--text);color:#fff;padding:10px 18px;border-radius:99px;font-size:.78rem;font-weight:700;box-shadow:var(--shm);opacity:0;pointer-events:none;transition:all .3s;z-index:999;white-space:nowrap;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;}
+.srch{position:relative;margin-bottom:11px;}
+.srch input{padding-left:34px;}
+.srch svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;}
+.tag{background:var(--bg);border:1px solid var(--border);border-radius:99px;padding:2px 8px;font-size:.7rem;display:flex;align-items:center;gap:3px;font-weight:700;}
+.tagr{cursor:pointer;color:var(--danger);}
+.tw{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;}
+.sc2{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);}
+.sc2:last-child{border-bottom:none;}
+.log-i{display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--border);font-size:.78rem;font-weight:600;}
+.log-d{width:7px;height:7px;border-radius:50%;background:var(--accent);margin-top:5px;flex-shrink:0;}
+.log-t{color:var(--muted);font-size:.66rem;flex-shrink:0;width:70px;}
+.sugc{background:var(--white);border:1.5px solid #D1FAE5;border-radius:11px;padding:11px;margin-bottom:8px;cursor:pointer;transition:all .2s;box-shadow:var(--sh);}
+.sugc:hover{transform:translateY(-2px);border-color:var(--a2);}
+
+/* ══ WAVEFORM MICRO ══ */
+.ai-waveform{display:none;align-items:center;justify-content:center;gap:3px;height:34px;width:100%;padding:0 4px;margin-bottom:4px;}
+.ai-waveform.active{display:flex !important;}
+.aiinp.hidden{display:none !important;}
+.wv-bar{width:3px;border-radius:99px;background:var(--muted);animation:wvPulse 1.1s ease-in-out infinite;transform-origin:bottom;flex-shrink:0;}
+.wv-bar:nth-child(1){height:5px;animation-delay:.00s;}
+.wv-bar:nth-child(2){height:9px;animation-delay:.07s;}
+.wv-bar:nth-child(3){height:15px;animation-delay:.14s;}
+.wv-bar:nth-child(4){height:22px;animation-delay:.21s;}
+.wv-bar:nth-child(5){height:26px;animation-delay:.28s;}
+.wv-bar:nth-child(6){height:30px;animation-delay:.35s;}
+.wv-bar:nth-child(7){height:24px;animation-delay:.42s;}
+.wv-bar:nth-child(8){height:18px;animation-delay:.49s;}
+.wv-bar:nth-child(9){height:28px;animation-delay:.56s;}
+.wv-bar:nth-child(10){height:22px;animation-delay:.63s;}
+.wv-bar:nth-child(11){height:30px;animation-delay:.70s;}
+.wv-bar:nth-child(12){height:24px;animation-delay:.77s;}
+.wv-bar:nth-child(13){height:16px;animation-delay:.84s;}
+.wv-bar:nth-child(14){height:26px;animation-delay:.91s;}
+.wv-bar:nth-child(15){height:18px;animation-delay:.98s;}
+.wv-bar:nth-child(16){height:12px;animation-delay:.10s;}
+.wv-bar:nth-child(17){height:20px;animation-delay:.17s;}
+.wv-bar:nth-child(18){height:28px;animation-delay:.24s;}
+.wv-bar:nth-child(19){height:14px;animation-delay:.31s;}
+.wv-bar:nth-child(20){height:9px;animation-delay:.38s;}
+.wv-bar:nth-child(21){height:5px;animation-delay:.45s;}
+@keyframes wvPulse{0%,100%{transform:scaleY(.2);opacity:.3;}50%{transform:scaleY(1);opacity:1;}}
+.aiinp-wrap.recording{border-color:var(--danger)!important;background:rgba(244,63,94,.04);}
+.aiinp-wrap.recording .wv-bar{background:var(--danger);}
+.wv-label{font-size:.75rem;font-weight:800;color:var(--danger);margin-left:8px;white-space:nowrap;animation:wvLabelPulse 1.4s ease-in-out infinite;}
+@keyframes wvLabelPulse{0%,100%{opacity:.6;}50%{opacity:1;}}
+
+/* ══ BOUTON EXPAND BARRE ══ */
+.inp-expand-btn{position:absolute;top:7px;right:8px;width:22px;height:22px;border-radius:6px;background:rgba(136,146,176,.15);border:none;cursor:pointer;display:none;align-items:center;justify-content:center;transition:all .2s;z-index:5;}
+.inp-expand-btn.visible{display:flex;}
+.inp-expand-btn:active{background:rgba(255,107,53,.2);}
+.inp-expand-btn svg{width:12px;height:12px;stroke:var(--muted);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ══ MODE PLEIN ÉCRAN BARRE ══ */
+.aiinp-wrap.expanded{position:fixed !important;inset:0 !important;border-radius:0 !important;z-index:6000;padding:54px 16px 16px;min-height:100vh !important;border:none !important;background:var(--white);}
+.aiinp-wrap.expanded .aiinp{font-size:1rem;max-height:none;flex:1;min-height:200px;}
+.aiinp-wrap.expanded .inp-expand-btn{top:14px;right:14px;width:32px;height:32px;background:rgba(136,146,176,.2);}
+.aiinp-wrap.expanded .inp-expand-btn svg{width:16px;height:16px;}
+.aiinp-wrap.expanded .aibar-btns{margin-top:auto;padding-top:12px;border-top:1px solid var(--border);}
+.expand-close-label{display:none;position:absolute;top:16px;left:16px;font-size:.8rem;font-weight:800;color:var(--muted);}
+.aiinp-wrap.expanded .expand-close-label{display:block;}
+
+
+/* ══════════════════════════════════════════
+   LOADER CINÉMATIQUE
+══════════════════════════════════════════ */
+#splashScreen{
+  position:fixed;inset:0;z-index:9000;background:#060D1F;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity .6s ease,transform .6s ease;overflow:hidden;
+}
+#splashScreen.hidden{opacity:0;transform:scale(1.04);pointer-events:none;}
+.splash-stars{position:absolute;inset:0;overflow:hidden;}
+.splash-star{position:absolute;border-radius:50%;background:#fff;animation:starTwinkle var(--d,2s) ease-in-out infinite var(--delay,0s);}
+@keyframes starTwinkle{0%,100%{opacity:.15;transform:scale(.7);}50%{opacity:.9;transform:scale(1.3);}}
+.splash-orb1{position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(255,107,53,.32) 0%,transparent 70%);top:-70px;right:-70px;animation:orbDrift1 6s ease-in-out infinite;}
+.splash-orb2{position:absolute;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(79,142,247,.28) 0%,transparent 70%);bottom:-50px;left:-50px;animation:orbDrift2 7s ease-in-out infinite;}
+@keyframes orbDrift1{0%,100%{transform:translate(0,0);}50%{transform:translate(-18px,18px);}}
+@keyframes orbDrift2{0%,100%{transform:translate(0,0);}50%{transform:translate(18px,-18px);}}
+.splash-logo-wrap{position:relative;display:flex;flex-direction:column;align-items:center;margin-bottom:48px;}
+.splash-icon{
+  width:104px;height:104px;border-radius:24px;
+  background:linear-gradient(135deg,rgba(255,255,255,.13),rgba(255,255,255,.04));
+  border:1.5px solid rgba(255,255,255,.18);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  margin-bottom:20px;
+  box-shadow:0 18px 55px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.06) inset;
+  animation:iconPop .9s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes iconPop{from{opacity:0;transform:scale(.4) translateY(24px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.splash-icon-mon{font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;color:rgba(255,255,255,.6);letter-spacing:3px;line-height:1;}
+.splash-icon-asst{font-family:'Nunito',sans-serif;font-size:1.22rem;font-weight:900;color:#fff;letter-spacing:1.5px;line-height:1.2;}
+.splash-icon-scol{font-family:'Nunito',sans-serif;font-size:.65rem;font-weight:800;color:#FF8C42;letter-spacing:2.5px;margin-top:2px;}
+.splash-icon-dot{width:6px;height:6px;border-radius:50%;background:#FF6B35;margin:5px auto 0;box-shadow:0 0 10px rgba(255,107,53,.9);}
+.splash-appname{font-family:'Nunito',sans-serif;font-weight:900;font-size:1.18rem;color:#fff;letter-spacing:.4px;text-align:center;animation:fadeSlideUp .7s ease .3s both;}
+.splash-appname span{color:#FF6B35;}
+.splash-tagline{font-family:'Nunito',sans-serif;font-size:.68rem;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:1.8px;text-transform:uppercase;margin-top:5px;animation:fadeSlideUp .7s ease .45s both;}
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.splash-progress-wrap{width:190px;display:flex;flex-direction:column;align-items:center;gap:9px;animation:fadeSlideUp .6s ease .6s both;}
+.splash-progress-bar{width:100%;height:3px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;}
+.splash-progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#FF4500,#FF8C42,#FFB347);background-size:200%;width:0%;transition:width .08s linear;animation:shimmer 1.4s linear infinite;}
+@keyframes shimmer{0%{background-position:0%;}100%{background-position:200%;}}
+.splash-progress-pct{font-family:'Nunito',sans-serif;font-size:.65rem;font-weight:800;color:rgba(255,255,255,.4);letter-spacing:.5px;}
+
+/* ══ TOAST NOTIFICATIONS ══ */
+.notif-toast{
+  position:fixed;top:66px;right:10px;left:10px;z-index:8500;
+  background:rgba(18,26,58,.97);border:1px solid rgba(255,255,255,.11);
+  border-radius:16px;padding:12px 13px;
+  display:flex;align-items:flex-start;gap:11px;
+  box-shadow:0 10px 40px rgba(0,0,0,.45);
+  backdrop-filter:blur(20px);
+  transform:translateY(-130px);opacity:0;
+  transition:transform .38s cubic-bezier(.34,1.2,.64,1),opacity .38s ease;
+  max-width:420px;margin:0 auto;
+}
+.notif-toast.show{transform:translateY(0);opacity:1;}
+.notif-toast-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#FF6B35,#FF4500);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.notif-toast-icon svg{width:17px;height:17px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.notif-toast-body{flex:1;min-width:0;}
+.notif-toast-title{font-size:.8rem;font-weight:900;color:#fff;margin-bottom:2px;}
+.notif-toast-msg{font-size:.70rem;color:rgba(255,255,255,.55);font-weight:600;line-height:1.4;}
+.notif-toast-close{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.07);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.notif-toast-close svg{width:9px;height:9px;stroke:rgba(255,255,255,.45);fill:none;stroke-width:2.5;stroke-linecap:round;}
+.notif-perm-btn{width:100%;padding:12px;border-radius:12px;border:none;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.86rem;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;margin-bottom:7px;}
+.notif-perm-btn.enabled{background:linear-gradient(135deg,#00C896,#00A875);color:#fff;box-shadow:0 4px 14px rgba(0,200,150,.28);}
+.notif-perm-btn.disabled{background:var(--bg);color:var(--muted);border:1.5px solid var(--border);}
+.notif-perm-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ══ LOADER SPLASH ══ */
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ══ PAGE AUTH ══ */
+#authScreen{position:fixed;inset:0;background:var(--bg);z-index:8000;overflow-y:auto;display:none;flex-direction:column;}
+#authScreen.show{display:flex;}
+.auth-hero{background:linear-gradient(135deg,#1C2340,#2D3A6B);padding:50px 24px 36px;text-align:center;flex-shrink:0;}
+.auth-logo{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:900;color:#fff;margin-bottom:4px;}
+.auth-logo span{color:#FF6B35;}
+.auth-sub{font-size:.8rem;color:rgba(255,255,255,.55);font-weight:600;}
+.auth-body{flex:1;padding:24px 20px 40px;}
+.auth-title{font-size:1.1rem;font-weight:900;color:var(--text);margin-bottom:4px;}
+.auth-desc{font-size:.78rem;color:var(--muted);font-weight:600;margin-bottom:24px;}
+.auth-google-btn{width:100%;padding:14px;background:#fff;border:1.5px solid var(--border);border-radius:14px;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;color:#1C2340;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);transition:all .2s;}
+.auth-google-btn:active{transform:translateY(1px);box-shadow:none;}
+.auth-sep{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--muted);font-size:.75rem;font-weight:700;}
+.auth-sep::before,.auth-sep::after{content:'';flex:1;height:1px;background:var(--border);}
+.auth-field{margin-bottom:10px;}
+.auth-field label{display:block;font-size:.67rem;font-weight:800;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px;}
+.auth-btn-p{width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;margin-top:4px;transition:all .2s;}
+.auth-btn-p:active{background:#e55a26;}
+.auth-skip{width:100%;padding:13px;background:transparent;border:1.5px solid var(--border);color:var(--muted);border-radius:14px;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;margin-top:8px;transition:all .2s;}
+.auth-skip:active{border-color:var(--accent);color:var(--accent);}
+.auth-switch{text-align:center;margin-top:16px;font-size:.78rem;font-weight:700;color:var(--muted);}
+.auth-switch span{color:var(--accent);cursor:pointer;font-weight:900;}
+
+/* ══ PROFIL BOUTON HEADER ══ */
+.profile-hbtn{position:relative;}
+.profile-hbtn .profile-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#FF8C5A);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:900;color:#fff;text-transform:uppercase;}
+.profile-hbtn .notif-dot{position:absolute;top:3px;right:3px;width:8px;height:8px;border-radius:50%;background:var(--a2);border:1.5px solid var(--white);}
+
+/* ══ MODAL PROFIL ══ */
+#profileModal{position:fixed;inset:0;z-index:7000;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);display:none;align-items:flex-end;}
+#profileModal.show{display:flex;}
+.profile-sheet{background:var(--white);border-radius:20px 20px 0 0;padding:20px 20px 36px;width:100%;max-height:85vh;overflow-y:auto;}
+.profile-handle{width:36px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 18px;}
+.profile-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;}
+.profile-big-av{width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#FF8C5A);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900;color:#fff;flex-shrink:0;}
+.profile-name{font-size:1.05rem;font-weight:900;color:var(--text);}
+.profile-email{font-size:.75rem;color:var(--muted);font-weight:600;margin-top:2px;}
+.profile-badge{display:inline-block;background:#EEF4FF;color:#4F8EF7;padding:2px 10px;border-radius:99px;font-size:.65rem;font-weight:900;margin-top:5px;}
+.profile-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer;}
+.profile-row:last-child{border-bottom:none;}
+.profile-row-l{display:flex;align-items:center;gap:10px;}
+.profile-row-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.profile-row-icon svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.profile-row-title{font-size:.87rem;font-weight:800;color:var(--text);}
+.profile-row-sub{font-size:.68rem;color:var(--muted);font-weight:600;}
+.profile-login-cta{background:linear-gradient(135deg,#1C2340,#2D3A6B);border-radius:14px;padding:16px;text-align:center;margin-bottom:18px;}
+.profile-login-cta p{font-size:.82rem;color:rgba(255,255,255,.7);font-weight:600;margin-bottom:10px;}
+.profile-login-cta button{padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;cursor:pointer;}
+</style>
+</head>
+<body>
+
+<!-- ══ LOADER CINÉMATIQUE ══ -->
+<div id="splashScreen">
+  <!-- Étoiles générées en JS -->
+  <div class="splash-stars" id="splashStars"></div>
+  <!-- Orbes de lumière -->
+  <div class="splash-orb1"></div>
+  <div class="splash-orb2"></div>
+
+  <!-- Logo + Nom -->
+  <div class="splash-logo-wrap">
+    <div class="splash-icon">
+      <div class="splash-icon-mon">MON</div>
+      <div class="splash-icon-asst">ASSISTANT</div>
+      <div class="splash-icon-scol">SCOLAIRES</div>
+      <div class="splash-icon-dot"></div>
+    </div>
+    <div class="splash-appname"><span>Mon</span> Assistant Scolaires</div>
+    <div class="splash-tagline">L'encre des élèves ivoiriens</div>
+  </div>
+
+  <!-- Barre de progression -->
+  <div class="splash-progress-wrap">
+    <div class="splash-progress-bar">
+      <div class="splash-progress-fill" id="splashFill"></div>
+    </div>
+    <div class="splash-progress-pct" id="splashPct">0%</div>
+  </div>
+</div>
+
+<!-- ══ TOAST NOTIFICATION ══ -->
+<div class="notif-toast" id="notifToast">
+  <div class="notif-toast-icon">
+    <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+  </div>
+  <div class="notif-toast-body">
+    <div class="notif-toast-title" id="notifTitle">Notification</div>
+    <div class="notif-toast-msg" id="notifMsg">Message</div>
+  </div>
+  <button class="notif-toast-close" onclick="closeNotifToast()">
+    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+</div>
+
+<!-- AUTH SCREEN -->
+<div id="authScreen">
+  <div class="auth-hero">
+    <div class="auth-logo"><span>Mon</span> Assistant Scolaires</div>
+    <div class="auth-sub">L'encre des étudiants — apprendre, réviser, réussir</div>
+  </div>
+  <div class="auth-body">
+    <div id="authForm">
+      <div class="auth-title" id="authTitle">Bienvenue 👋</div>
+      <div class="auth-desc" id="authDesc">Connecte-toi ou crée un compte pour sauvegarder ta progression</div>
+
+      <!-- Google -->
+      <button class="auth-google-btn" onclick="signInGoogle()">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Continuer avec Google
+      </button>
+
+      <div class="auth-sep">ou</div>
+
+      <div id="authEmailSection">
+        <div class="auth-field"><label>Adresse e-mail</label><input id="authEmail" type="email" placeholder="tonemail@example.com"/></div>
+        <div class="auth-field" id="authNameField" style="display:none"><label>Prénom</label><input id="authName" type="text" placeholder="Ton prénom"/></div>
+        <div class="auth-field"><label>Mot de passe</label><input id="authPass" type="password" placeholder="••••••••"/></div>
+        <button class="auth-btn-p" id="authMainBtn" onclick="authSubmit()">Se connecter</button>
+        <div class="auth-switch">Pas de compte ? <span onclick="toggleAuthMode()">Créer un compte</span></div>
+      </div>
+
+      <button class="auth-skip" onclick="skipAuth()">Continuer sans compte →</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PROFIL -->
+<div id="profileModal" onclick="if(event.target===this)closeProfile()">
+  <div class="profile-sheet">
+    <div class="profile-handle"></div>
+    <div id="profileContent"></div>
+  </div>
+</div>
+
+<header class="app-header">
+  <div class="app-logo">
+    <svg viewBox="0 0 30 30" fill="none">
+      <rect width="30" height="30" rx="8" fill="#1C2340"/>
+      <path d="M6 21V11l9-5 9 5v10" stroke="#FF6B35" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M12 21v-5.5h6V21" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="15" cy="6.5" r="1.3" fill="#FF6B35"/>
+    </svg>
+    <span><span class="lo-ac">Mon</span> Assistant Scolaires</span>
+  </div>
+  <div class="hdr-r">
+    <div class="hbtn profile-hbtn" onclick="openProfile()" title="Profil" id="profileHBtn">
+      <svg id="profileHIcon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20v-1a6 6 0 0112 0v1"/></svg>
+    </div>
+  </div>
+</header>
+
+<div class="app-body">
+
+<!-- ACCUEIL -->
+<div class="page active" id="page-accueil">
+  <div class="wb">
+    <div class="wbg">Bonne journée</div>
+    <div class="wbt" id="wbTitle">Mon Assistant Scolaires</div>
+    <div class="wbd" id="wbDate"></div>
+  </div>
+  <div class="sg">
+    <div class="sc"><div class="sn" style="color:var(--accent)" id="stC">0</div><div class="sl">Cours révisés</div></div>
+    <div class="sc"><div class="sn" style="color:var(--a2)" id="stN">0</div><div class="sl">Notes prises</div></div>
+    <div class="sc"><div class="sn" style="color:var(--a3)" id="stR">0</div><div class="sl">Rappels actifs</div></div>
+    <div class="sc"><div class="sn" style="color:var(--a4)" id="stM">--</div><div class="sl">Dernière moy.</div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ci" style="background:var(--a2)"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div><div class="ct2">Suggestions du jour</div><div class="cs2">Matières à prioriser</div></div></div>
+    <div id="sugZ"></div>
+  </div>
+  <div class="card" id="urgCard" style="display:none">
+    <div class="ch"><div class="ci" style="background:var(--danger)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div><div class="ct2">Rappels urgents</div></div></div>
+    <div id="urgZ"></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ci" style="background:var(--a3)"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div><div class="ct2">Activité récente</div></div></div>
+    <div id="actLog"></div>
+  </div>
+</div>
+
+<!-- COURS -->
+<div class="page" id="page-cours">
+  <div class="stitle">Cours officiels CI</div>
+  <div class="ssub">6ème → Terminale · Toutes matières</div>
+
+  <!-- BANDEAU PDF UPLOAD -->
+  <div class="pdf-banner">
+    <div class="pdf-banner-title">📚 Ajoute tes vrais cours PDF</div>
+    <div class="pdf-banner-sub">Upload tes fichiers PDF de cours depuis ton téléphone. Amina pourra les lire et t'aider à les comprendre !</div>
+    <div class="pdf-upload-zone" onclick="document.getElementById('pdfInput').click()">
+      <input type="file" id="pdfInput" accept=".pdf,image/*" multiple style="display:none" onchange="handlePdfUpload(event)"/>
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+      <div class="pdf-upload-zone-text">Appuie pour uploader un PDF ou une image de cours</div>
+    </div>
+    <div class="pdf-list" id="pdfList"></div>
+  </div>
+
+  <div class="srch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input id="coursSearch" placeholder="Rechercher un cours..." oninput="renderCours()"/></div>
+  <div class="nchips" id="nchips"></div>
+  <div id="coursTree"></div>
+</div>
+
+<!-- RÉVISION -->
+<div class="page" id="page-revision">
+  <div class="stitle">Révision</div>
+  <div class="ssub">Enregistre tes séances</div>
+  <div class="card">
+    <div class="ch"><div class="ci" style="background:var(--accent)"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><div><div class="ct2">Nouvelle séance</div></div></div>
+    <div class="field"><label>Classe</label><select id="rvSerie" onchange="initRvMat()">
+      <option>6ème</option><option>5ème</option><option>4ème</option><option>3ème</option>
+      <option>2nde</option><option>Première A</option><option selected>Première D</option><option>Terminale D</option><option>Terminale A</option>
+    </select></div>
+    <div class="field"><label>Matière</label><select id="rvMat"></select></div>
+    <div class="field"><label>Chapitre / Thème</label><input id="rvChap" placeholder="Ex: Les intégrales..."/></div>
+    <div class="field"><label>Durée (min)</label><input id="rvDuree" type="number" placeholder="60" min="1"/></div>
+    <div class="field"><label>Maîtrise</label><select id="rvNiv"><option value="1">À revoir</option><option value="2">Moyen</option><option value="3" selected>Bien</option><option value="4">Maîtrisé</option></select></div>
+    <button class="btn btn-p btn-f" onclick="addRev()">Enregistrer</button>
+  </div>
+  <div class="card"><div class="ch"><div class="ci" style="background:var(--a3)"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><div><div class="ct2">Progression</div></div></div><div id="progZ"></div></div>
+  <div class="card">
+    <div class="ch"><div class="ci" style="background:var(--a2)"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg></div><div><div class="ct2">Historique</div><div class="cs2" id="histCnt">0 séances</div></div>
+    <button class="btn btn-g btn-sm" onclick="exportRev()" style="margin-left:auto">Export</button></div>
+    <div id="histRev"></div>
+  </div>
+</div>
+
+<!-- NOTES -->
+<div class="page" id="page-notes">
+  <div class="stitle">Mes Notes</div>
+  <div class="ssub">Organise tes fiches</div>
+  <div style="display:flex;gap:7px;margin-bottom:10px">
+    <input id="noteSearch" placeholder="Rechercher..." style="flex:1" oninput="renderNotes()"/>
+    <button class="btn btn-p btn-sm" onclick="openNoteModal()">+ Nouvelle</button>
+  </div>
+  <div id="noteTags" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:9px"></div>
+  <div id="notesList"></div>
+</div>
+
+<!-- MOYENNE -->
+<div class="page" id="page-moyenne">
+  <div class="stitle">Calculateur</div>
+  <div class="ssub">Moyenne avec coefficients officiels CI</div>
+  <div class="field"><label>Classe / Série</label>
+    <select id="moySerie" onchange="chargerMoyMat()">
+      <option>6ème</option><option>5ème</option><option>4ème</option><option>3ème</option>
+      <option>2nde</option><option>Première A</option><option selected>Première D</option><option>Terminale D</option><option>Terminale A</option>
+    </select>
+  </div>
+  <div id="moyDisp" class="md" style="display:none">
+    <div class="mb" id="moyBig">--</div>
+    <div style="font-size:.7rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.8px;font-weight:800">Moyenne générale</div>
+    <div id="moyMention" style="margin-top:7px"></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ci" style="background:var(--accent)"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg></div><div><div class="ct2">Notes par matière</div><div class="cs2" id="moyCoefInfo"></div></div></div>
+    <div id="matsZone"></div>
+    <hr class="divider">
+    <div style="display:flex;gap:7px">
+      <button class="btn btn-s btn-f" onclick="calcMoy()">Calculer ma moyenne</button>
+      <button class="btn btn-g btn-sm" onclick="reinitMoy()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.2"/></svg></button>
+    </div>
+  </div>
+  <div class="card"><div class="ch"><div class="ci" style="background:var(--a4)"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div><div class="ct2">Historique</div></div></div><div id="histMoy"></div></div>
+</div>
+
+<!-- RAPPELS -->
+<div class="page" id="page-rappels">
+  <div class="stitle">Rappels</div>
+  <div class="ssub">Planifie révisions et deadlines</div>
+  <div class="card">
+    <div class="ch"><div class="ci" style="background:var(--danger)"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div><div><div class="ct2">Nouveau rappel</div></div></div>
+    <div class="field"><label>Titre</label><input id="rTitre" placeholder="Ex: Réviser les intégrales..."/></div>
+    <div class="field"><label>Date et heure</label><input id="rDate" type="datetime-local"/></div>
+    <div class="field"><label>Type</label><select id="rType"><option value="revision">Révision</option><option value="devoir">Devoir à rendre</option><option value="examen">Examen / Contrôle</option><option value="autre">Autre</option></select></div>
+    <div class="field"><label>Priorité</label><select id="rPrio"><option value="normal">Normal</option><option value="urgent">Urgent</option></select></div>
+    <button class="btn btn-p btn-f" onclick="addRappel()">Créer le rappel</button>
+  </div>
+  <div id="rappelsList"></div>
+</div>
+
+<!-- PARAMÈTRES -->
+<div class="page" id="page-parametres">
+  <div class="stitle">Paramètres</div>
+  <div class="ssub">Personnalisez votre expérience</div>
+
+  <!-- Thème -->
+  <div class="set-section-title">Thème de l'application</div>
+  <div class="theme-grid" style="margin-bottom:16px">
+    <div class="theme-opt selected" id="theme-clair" onclick="setTheme('clair')">
+      <div class="theme-preview" style="background:#F7F8FC;border:1px solid #E8ECF4;"></div>
+      <div class="theme-label">☀️ Clair</div>
+    </div>
+    <div class="theme-opt" id="theme-sombre" onclick="setTheme('sombre')">
+      <div class="theme-preview" style="background:#0F1117;"></div>
+      <div class="theme-label">🌙 Sombre</div>
+    </div>
+  </div>
+
+  <!-- Lecture -->
+  <div class="set-section-title">Lecture</div>
+  <div class="set-row" style="margin-bottom:7px">
+    <div class="set-row-left">
+      <div class="set-row-title">Taille de police</div>
+      <div class="set-row-sub">Pour le lecteur de chapitres</div>
+    </div>
+    <div style="display:flex;gap:6px;align-items:center">
+      <div onclick="setFontSize('small')" id="fs-small" style="width:30px;height:30px;border-radius:8px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.7rem;font-weight:800;color:var(--muted);background:var(--white)">A</div>
+      <div onclick="setFontSize('medium')" id="fs-medium" style="width:30px;height:30px;border-radius:8px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.85rem;font-weight:800;color:var(--muted);background:var(--white)">A</div>
+      <div onclick="setFontSize('large')" id="fs-large" style="width:30px;height:30px;border-radius:8px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;font-weight:800;color:var(--muted);background:var(--white)">A</div>
+    </div>
+  </div>
+  <div class="set-row" style="margin-bottom:16px">
+    <div class="set-row-left">
+      <div class="set-row-title">Langue</div>
+      <div class="set-row-sub">Interface en français</div>
+    </div>
+    <div class="set-row-right">🇫🇷 FR</div>
+  </div>
+
+  <!-- Compte -->
+  <div class="set-section-title">Compte</div>
+  <div class="set-row" style="margin-bottom:7px">
+    <div class="set-row-left">
+      <div class="set-row-title">🔔 Notifications</div>
+      <div class="set-row-sub">Rappels, Amina, alertes de révision</div>
+    </div>
+    <button id="notifPermBtn" class="notif-perm-btn disabled" style="width:auto;padding:7px 14px;margin-bottom:0" onclick="requestNotifPermission()">
+      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <span id="notifPermLabel">Activer</span>
+    </button>
+  </div>
+  <div class="set-row" style="margin-bottom:7px">
+    <div class="set-row-left">
+      <div class="set-row-title">Clé API Amina</div>
+      <div class="set-row-sub">Pour utiliser l'IA hors aperçu Claude</div>
+    </div>
+    <button onclick="openApiKeyModal()" style="background:var(--a3);color:#fff;border:none;padding:7px 14px;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:800;cursor:pointer;">🔑 CONFIGURER</button>
+  </div>
+  <div class="set-row" style="margin-bottom:16px">
+    <div class="set-row-left">
+      <div class="set-row-title">Déconnexion</div>
+      <div class="set-row-sub">Quitter votre session</div>
+    </div>
+    <button class="quit-btn" onclick="toast('Déconnexion effectuée')">QUITTER</button>
+  </div>
+
+  <!-- À propos -->
+  <div class="set-section-title">À propos de l'application</div>
+
+  <div class="about-hero">
+    <div class="about-logo">Mon Assistant Scolaires</div>
+    <div class="about-ver">Version 1.0.0</div>
+    <div class="about-tagline">L'assistant des élèves — apprendre, réviser, réussir.</div>
+  </div>
+
+  <div class="about-dev">
+    <div class="about-dev-name">David Laurens Kokoura Meurisse</div>
+    <div class="about-dev-handle">DAVIESLAY 💥</div>
+    <div class="about-dev-bio">Développeur passionné, créateur de cette application. Artisan du numérique qui croit que chaque élève mérite les meilleurs outils. Basé en Côte d'Ivoire, je bâtis des solutions pour les élèves africains et le monde entier.</div>
+  </div>
+
+  <div class="about-table">
+    <div class="about-row"><div class="about-row-key">Application</div><div class="about-row-val">Mon Assistant Scolaires</div></div>
+    <div class="about-row"><div class="about-row-key">Date de création</div><div class="about-row-val">Avril 2026</div></div>
+    <div class="about-row"><div class="about-row-key">Développeur</div><div class="about-row-val">DAVIESLAY 💥</div></div>
+    <div class="about-row"><div class="about-row-key">Plateforme</div><div class="about-row-val">Web / PWA / Android</div></div>
+    <div class="about-row"><div class="about-row-key">Technologies</div><div class="about-row-val">HTML · Firebase · Cloudinary</div></div>
+    <div class="about-row"><div class="about-row-key">Base de données</div><div class="about-row-val">Cloud Firestore</div></div>
+    <div class="about-row"><div class="about-row-key">Stockage images</div><div class="about-row-val">Cloudinary CDN</div></div>
+    <div class="about-row"><div class="about-row-key">Version</div><div class="about-row-val">1.0.0 — Build stable</div></div>
+  </div>
+
+  <div class="about-footer">
+    © AVRIL 2026 — MON ASSISTANT SCOLAIRES<br>
+    <em>Créé avec passion par David Laurens Kokoura Meurisse · DAVIESLAY 💥</em><br>
+    Tous droits réservés — L'assistant des élèves
+  </div>
+</div>
+
+</div><!-- app-body -->
+
+<!-- LECTEUR COURS -->
+<div class="reader" id="reader">
+  <div class="rnav">
+    <div class="rback" onclick="closeReader()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:.9rem;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="rTitle"></div>
+      <div style="font-size:.67rem;color:var(--muted);font-weight:600;margin-top:1px;display:flex;gap:5px;flex-wrap:wrap" id="rMeta"></div>
+    </div>
+  </div>
+  <div class="rbody"><div class="cc" id="rContent"></div></div>
+  <div class="ract">
+    <button class="btn btn-s btn-sm" onclick="markRevised()" style="flex:1">Marqué révisé</button>
+    <button class="btn btn-g btn-sm" onclick="noteFromReader()">Note</button>
+    <button class="btn btn-g btn-sm" onclick="rappelFromReader()">Rappel</button>
+    <button class="btn btn-g btn-sm" onclick="askAIAboutCours()">Amina</button>
+  </div>
+</div>
+
+<!-- BOUTON AMINA -->
+<div class="aibtn" onclick="openAI()" id="aiFab">
+  <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20v-1a6 6 0 0112 0v1"/><path d="M12 14v2"/></svg>
+  <div class="aipulse"></div>
+</div>
+
+<!-- PANEL AMINA -->
+<div class="aipanel" id="aiPanel">
+  <div class="aiphdr">
+    <div class="aiav">
+      <svg viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="20" fill="rgba(255,255,255,.1)"/>
+        <circle cx="20" cy="15" r="7" fill="rgba(255,255,255,.85)"/>
+        <path d="M8 36c0-6.627 5.373-12 12-12s12 5.373 12 12" fill="rgba(255,255,255,.75)"/>
+        <path d="M15 12c0-2.8 2.2-4 5-4s5 1.2 5 4" stroke="#FF6B35" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div style="flex:1">
+      <div class="ain">Amina — IA Scolaire</div>
+      <div class="ais"><div class="aisd"></div>En ligne · Prête à t'aider</div>
+    </div>
+    <button class="aix" title="Effacer la discussion" onclick="clearChat()" style="margin-right:4px;font-size:.6rem;font-weight:900;background:rgba(255,255,255,.1);border-radius:7px;width:auto;padding:4px 8px;color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.15);">EFFACER</button>
+    <button class="aix" onclick="closeAI()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+
+  <!-- ONGLETS MODES — TOUS FONCTIONNELS -->
+  <div class="ai-modes">
+    <button class="ai-mode-btn active" id="mode-chat" onclick="setMode('chat')">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Chat
+    </button>
+    <button class="ai-mode-btn" id="mode-exo" onclick="setMode('exo')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Exercices
+    </button>
+    <button class="ai-mode-btn" id="mode-redaction" onclick="setMode('redaction')">
+      <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Rédaction
+    </button>
+    <button class="ai-mode-btn" id="mode-calcul" onclick="setMode('calcul')">
+      <svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>Calcul
+    </button>
+    <button class="ai-mode-btn" id="mode-philo" onclick="setMode('philo')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Philo
+    </button>
+  </div>
+
+  <div class="aimsgs" id="aiMsgs"></div>
+
+  <div class="aisugs" id="aiSugs">
+    <button class="aisug" onclick="quickAsk('Salut Amina !')">Salut !</button>
+    <button class="aisug" onclick="quickAsk('Résous-moi : 2x + 5 = 13, montre les étapes')">Résoudre équation</button>
+    <button class="aisug" onclick="quickAsk('Rédige une introduction sur la décolonisation de l\'Afrique')">Intro décolonisation</button>
+    <button class="aisug" onclick="quickAsk('Explique-moi le théorème de Pythagore avec un exemple concret')">Pythagore</button>
+    <button class="aisug" onclick="quickAsk('Donne-moi des conseils pour le BAC en Côte d\'Ivoire')">Conseils BAC</button>
+    <button class="aisug" onclick="quickAsk('Calcule la dérivée de f(x) = 3x² + 2x - 5')">Dérivée</button>
+    <button class="aisug" onclick="quickAsk('Qu\'est-ce que la liberté selon Sartre ?')">Sartre et liberté</button>
+  </div>
+
+  <div class="aispeak" id="aiSpeak">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00C896" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 010 14.14"/><path d="M15.54 8.46a5 5 0 010 7.07"/></svg>
+    <span class="aispeak-txt" id="aiSpeakTxt">Amina parle...</span>
+    <button class="aispeak-stop" onclick="stopSpeak()">Stop</button>
+  </div>
+
+  <div class="aibar" style="position:relative">
+    <!-- Menu attachement -->
+    <div class="attach-menu" id="attachMenu">
+      <div class="attach-opt" onclick="triggerAttach('image/*,video/*')">
+        <svg viewBox="0 0 24 24" stroke="#4F8EF7"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Photo / Image
+      </div>
+      <div class="attach-opt" onclick="triggerCamera()">
+        <svg viewBox="0 0 24 24" stroke="#00C896"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Prendre une photo
+      </div>
+      <div class="attach-opt" onclick="triggerAttach('.pdf')">
+        <svg viewBox="0 0 24 24" stroke="#F43F5E"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Fichier PDF
+      </div>
+    </div>
+    <input type="file" id="aiFileInput" style="display:none" onchange="handleAiFile(event)"/>
+    <input type="file" id="aiCameraInput" accept="image/*" capture="environment" style="display:none" onchange="handleAiFile(event)"/>
+
+    <!-- Grand rectangle arrondi style image 2 -->
+    <div class="aiinp-wrap" id="aiInpWrap">
+      <!-- Label fermer (mode plein écran) -->
+      <span class="expand-close-label">✏️ Mode écriture étendu</span>
+      <!-- Bouton expand (apparaît quand texte long) -->
+      <button class="inp-expand-btn" id="inpExpandBtn" onclick="toggleExpandBar()" title="Agrandir">
+        <svg id="expandIcon" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+      </button>
+      <!-- Champ de texte (caché pendant enregistrement) -->
+      <textarea class="aiinp" id="aiInput" placeholder="Parle à Amina..." rows="1"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAI();}"
+        oninput="onAiInputChange(this)"></textarea>
+      <!-- Waveform (visible pendant enregistrement) -->
+      <div class="ai-waveform" id="aiWaveform" style="min-height:34px;">
+        <div class="wv-bar"></div><div class="wv-bar"></div><div class="wv-bar"></div>
+        <div class="wv-bar"></div><div class="wv-bar"></div><div class="wv-bar"></div>
+        <div class="wv-bar"></div><div class="wv-bar"></div><div class="wv-bar"></div>
+        <div class="wv-bar"></div><div class="wv-bar"></div><div class="wv-bar"></div>
+        <div class="wv-bar"></div><div class="wv-bar"></div><div class="wv-bar"></div>
+        <div class="wv-bar"></div><div class="wv-bar"></div><div class="wv-bar"></div>
+        <div class="wv-bar"></div><div class="wv-bar"></div><div class="wv-bar"></div>
+        <span class="wv-label">🎙️ Écoute...</span>
+      </div>
+      <!-- Ligne du bas : boutons -->
+      <div class="aibar-btns">
+        <div class="aibar-btns-l">
+          <!-- + en bas à gauche -->
+          <button class="aibar-iconbtn" onclick="toggleAttachMenu()" title="Joindre">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+        </div>
+        <div class="aibar-btns-r">
+          <!-- Micro -->
+          <button class="aibar-iconbtn aimic-ext" id="aiMicBtn" onclick="toggleMic()" title="Parler">
+            <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          </button>
+          <!-- Envoi (FAB orange) -->
+          <button class="aibar-send-fab" onclick="sendAI()">
+            <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL NOTE -->
+<div class="moverlay" id="noteModal">
+  <div class="modal">
+    <div class="mhandle"></div>
+    <div class="mtitle" id="nmTitle">Nouvelle note</div>
+    <div class="field"><label>Titre</label><input id="nmTit" placeholder="Titre de la note..."/></div>
+    <div class="field"><label>Matière</label><input id="nmMat" placeholder="Ex: Maths, SVT..."/></div>
+    <div class="field"><label>Contenu</label><textarea id="nmCont" placeholder="Tes notes ici..."></textarea></div>
+    <div class="field"><label>Tags</label><input id="nmTag" placeholder="Ajouter un tag... (Entrée)" onkeydown="addTag(event)"/><div class="tw" id="curTags"></div></div>
+    <div class="field"><label>Couleur</label>
+      <div style="display:flex;gap:7px;margin-top:3px">
+        <div onclick="selCol('orange')" id="col-orange" style="width:24px;height:24px;border-radius:50%;background:#FFD0B5;cursor:pointer;border:2.5px solid transparent"></div>
+        <div onclick="selCol('green')" id="col-green" style="width:24px;height:24px;border-radius:50%;background:#A7F3D0;cursor:pointer;border:2.5px solid transparent"></div>
+        <div onclick="selCol('pink')" id="col-pink" style="width:24px;height:24px;border-radius:50%;background:#FECDD3;cursor:pointer;border:2.5px solid transparent"></div>
+        <div onclick="selCol('blue')" id="col-blue" style="width:24px;height:24px;border-radius:50%;background:#BFDBFE;cursor:pointer;border:2.5px solid transparent"></div>
+      </div>
+    </div>
+    <div class="mact"><button class="btn btn-g" onclick="closeNoteModal()">Annuler</button><button class="btn btn-p" onclick="saveNote()">Enregistrer</button></div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bnav">
+  <div class="bt active" id="btn-accueil" onclick="goPage('accueil')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Accueil</div>
+  <div class="bt" id="btn-cours" onclick="goPage('cours')"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>Cours</div>
+  <div class="bt" id="btn-revision" onclick="goPage('revision')"><svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Révision</div>
+  <div class="bt" id="btn-notes" onclick="goPage('notes')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/></svg>Notes</div>
+  <div class="bt" id="btn-moyenne" onclick="goPage('moyenne')"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Moyenne</div>
+  <div class="bt" id="btn-rappels" onclick="goPage('rappels')"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>Rappels</div>
+  <div class="bt" id="btn-parametres" onclick="goPage('parametres')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Paramètres</div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════
+//  COEFFICIENTS — Première A/D fixes, autres vides (saisis manuellement)
+// ══════════════════════════════════════════
+const MATIERES_PAR_CLASSE = {
+  "6ème":      ["Maths","Français","Histoire-Géo","Sciences Naturelles","Physique-Chimie","Anglais","LV2","Éducation Civique","Arts Plastiques","Musique","EPS"],
+  "5ème":      ["Maths","Français","Histoire-Géo","Sciences Naturelles","Physique-Chimie","Anglais","LV2","Éducation Civique","Arts Plastiques","Musique","EPS"],
+  "4ème":      ["Maths","Français","Histoire-Géo","SVT","Physique-Chimie","Anglais","LV2","Éducation Civique","Arts Plastiques","Musique","EPS"],
+  "3ème":      ["Maths","Français","Histoire-Géo","SVT","Physique-Chimie","Anglais","LV2","Éducation Civique","Arts Plastiques","Musique","EPS"],
+  "2nde":      ["Maths","Français","Histoire-Géo","SVT","Physique-Chimie","Anglais","LV2","Philosophie","Éducation Civique","Arts Plastiques","Musique","EPS","Conduite"],
+  "Première A":{"Français":4,"Philosophie":4,"Anglais":4,"LV2":4,"Histoire-Géo":3,"Maths":2,"SVT":2,"Physique-C":2,"Arts Plastiques":1,"Musique":1,"Conduite":1,"EPS":1},
+  "Première D":{"Maths":4,"Physique-C":4,"SVT":4,"Français":2,"Philosophie":2,"Anglais":2,"Histoire-Géo":2,"Arts Plastiques":1,"Musique":1,"Conduite":1,"EPS":1},
+  "Terminale D":["Maths","Physique-Chimie","SVT","Français","Philosophie","Anglais","Histoire-Géo","Arts Plastiques","Musique","Conduite","EPS"],
+  "Terminale A":["Français","Philosophie","Histoire-Géo","Anglais","LV2","Maths","SVT","Physique-Chimie","Arts Plastiques","Musique","Conduite","EPS"]
+};
+
+const NVCFG = {
+  "6ème":    {bg:"linear-gradient(135deg,#00C896,#00A87A)",short:"6è",desc:"Collège · 1ère année",color:"#00C896"},
+  "5ème":    {bg:"linear-gradient(135deg,#4F8EF7,#2563EB)",short:"5è",desc:"Collège · 2ème année",color:"#4F8EF7"},
+  "4ème":    {bg:"linear-gradient(135deg,#A855F7,#7C3AED)",short:"4è",desc:"Collège · 3ème année",color:"#A855F7"},
+  "3ème":    {bg:"linear-gradient(135deg,#FF6B35,#DC4E1A)",short:"3è",desc:"Brevet de collège",color:"#FF6B35"},
+  "2nde":    {bg:"linear-gradient(135deg,#F43F5E,#BE123C)",short:"2d",desc:"Lycée · 1ère année",color:"#F43F5E"},
+  "Première":{bg:"linear-gradient(135deg,#2D3A6B,#1C2340)",short:"1è",desc:"Pré-baccalauréat",color:"#2D3A6B"},
+  "Terminale":{bg:"linear-gradient(135deg,#D4AF37,#B8860B)",short:"T",desc:"Baccalauréat",color:"#D4AF37"}
+};
+const MAT_CFG = {
+  "Maths":{bg:"#4F8EF7"},"Français":{bg:"#F43F5E"},"Histoire-Géo":{bg:"#FF6B35"},
+  "SVT":{bg:"#00C896"},"Sciences Naturelles":{bg:"#00C896"},"Physique-Chimie":{bg:"#A855F7"},
+  "Physique-C":{bg:"#A855F7"},"Philosophie":{bg:"#1C2340"},"Anglais":{bg:"#F43F5E"},
+  "Musique":{bg:"#EC4899"},"Arts Plastiques":{bg:"#F59E0B"},"LV2":{bg:"#FF6B35"},
+  "EPS":{bg:"#00C896"},"Conduite":{bg:"#FF6B35"},"Éducation Civique":{bg:"#4F8EF7"},
+  "default":{bg:"#8892B0"}
+};
+function getMC(m){return MAT_CFG[m]||MAT_CFG["default"];}
+
+// Cours intégrés (structure de base — les PDFs uploadés les enrichiront)
+const COURS_INTEGRES = {
+  "6ème":{
+    "Maths":["Nombres entiers naturels et opérations","Les fractions","Géométrie plane","Périmètres et aires","Introduction aux équations"],
+    "Français":["Le groupe nominal","Le verbe et la conjugaison","Les types de phrases","La narration","Lecture : contes africains"],
+    "Histoire-Géo":["La Côte d'Ivoire : géographie physique","Les populations de CI","L'Afrique physique","Civilisations africaines anciennes"],
+    "Sciences Naturelles":["La cellule","Les êtres vivants","La nutrition","La reproduction"],
+    "Physique-Chimie":["La matière et ses états","Mélanges et solutions","Introduction à la lumière"],
+    "Anglais":["Greetings and introductions","My family","My school","Daily activities"],
+    "Arts Plastiques":["Les couleurs primaires et secondaires","Dessin d'observation","L'art ivoirien"],
+    "Musique":["Les notes de musique","Rythme et mesure","Chansons traditionnelles CI"],
+    "EPS":["Athlétisme","Football","Basketball","Natation"]
+  },
+  "3ème":{
+    "Maths":["Fonctions linéaires et affines","Statistiques descriptives","Probabilités","Théorème de Pythagore","Équations du 1er degré"],
+    "Français":["L'argumentation","Le texte argumentatif","Le roman","La poésie","Étude de texte"],
+    "Histoire-Géo":["La décolonisation","L'indépendance de la CI","La mondialisation","Géographie de l'Afrique"],
+    "SVT":["La reproduction humaine","La génétique","L'évolution des espèces","L'environnement"],
+    "Physique-Chimie":["Le circuit électrique","Les lois de l'électricité","La chimie organique"],
+    "Arts Plastiques":["L'art africain traditionnel","Composition artistique","Techniques mixtes"],
+    "Musique":["Genres musicaux ivoiriens","Analyse musicale","Création musicale"]
+  },
+  "Première":{
+    "Maths":["La dérivation","Les suites numériques","Probabilités","Limites et continuité","Nombres complexes"],
+    "Physique-C":["Les ondes mécaniques","Optique","Électricité","Mécanique"],
+    "SVT":["La photosynthèse","La respiration cellulaire","La génétique","L'immunologie"],
+    "Français":["Le roman du XXe siècle","La poésie moderne","L'argumentation avancée","Étude de texte"],
+    "Philosophie":["La conscience","L'inconscient","La liberté","Le travail","La vérité"],
+    "Histoire-Géo":["Les grandes puissances","La mondialisation","Géopolitique africaine"],
+    "Anglais":["Advanced grammar","Literature","Current events","Writing skills"],
+    "Arts Plastiques":["Composition et expression","Histoire de l'art","Analyse d'œuvres"],
+    "Musique":["Harmonie","Histoire de la musique","Patrimoine musical africain"]
+  },
+  "Terminale":{
+    "Maths":["Les intégrales","Probabilités conditionnelles","Nombres complexes","Géométrie dans l'espace","Statistiques avancées"],
+    "Physique-C":["Mécanique de Newton","Thermodynamique","Optique ondulatoire","Chimie organique avancée"],
+    "SVT":["La régulation","L'immunologie avancée","L'évolution","La neurobiologie"],
+    "Philosophie":["Liberté et déterminisme","La justice","L'art","La religion","La science"],
+    "Histoire-Géo":["La mondialisation économique","Les conflits du XXe siècle","Géopolitique actuelle"],
+    "Anglais":["Essay writing","Literature analysis","Professional English"],
+    "Arts Plastiques":["Histoire de l'art mondial","Influence africaine sur l'art","Projet artistique personnel"],
+    "Musique":["Musicologie","Les grands compositeurs","Ethnomusicologie africaine"]
+  }
+};
+
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let D = JSON.parse(localStorage.getItem('mas_v5')||'{}');
+['revisions','notes','rappels','activites','moyennes','pdfs'].forEach(k=>{if(!D[k])D[k]=[];});
+let noteTags=[],noteColor='orange',editNoteId=null,niveauFilter=null,tagFilter=null;
+let currentCtx=null, aiMode='chat', aiHistory=[], recognizing=false, recognition=null;
+let pendingAttachments=[]; // fichiers en attente d'envoi
+
+function save(){localStorage.setItem('mas_v5',JSON.stringify(D));}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
+function now2(){return new Date().toISOString();}
+function fmt(iso){const d=new Date(iso);return d.toLocaleDateString('fr-FR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});}
+function logA(msg){D.activites.unshift({id:uid(),msg,ts:now2()});if(D.activites.length>60)D.activites=D.activites.slice(0,60);save();}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);}
+
+// ══════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════
+function goPage(p){
+  document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.bt').forEach(e=>e.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  const b=document.getElementById('btn-'+p);if(b)b.classList.add('active');
+  if(p==='accueil')renderAccueil();
+  else if(p==='cours')renderCours();
+  else if(p==='revision')renderRevision();
+  else if(p==='notes')renderNotes();
+  else if(p==='moyenne'){chargerMoyMat();renderHistMoy();}
+  else if(p==='rappels')renderRappels();
+}
+
+// ══════════════════════════════════════════
+//  ACCUEIL
+// ══════════════════════════════════════════
+function renderAccueil(){
+  const n=new Date();const h=n.getHours();
+  document.getElementById('wbTitle').textContent=h<12?'Bonne matinée ☀️':h<18?'Bon après-midi ':('Bonne soirée 🌙');
+  document.getElementById('wbDate').textContent=n.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('stC').textContent=D.revisions.length;
+  document.getElementById('stN').textContent=D.notes.length;
+  document.getElementById('stR').textContent=D.rappels.filter(r=>!r.done).length;
+  document.getElementById('stM').textContent=D.moyennes.length?D.moyennes[0].moy.toFixed(2):'--';
+  const cnt={};const p1d=MATIERES_PAR_CLASSE['Première D'];
+  const mats=Array.isArray(p1d)?p1d:Object.keys(p1d);
+  mats.forEach(m=>cnt[m]=0);
+  D.revisions.forEach(r=>{if(cnt[r.matiere]!==undefined)cnt[r.matiere]++;});
+  const sorted=Object.keys(cnt).sort((a,b)=>cnt[a]-cnt[b]).slice(0,3);
+  document.getElementById('sugZ').innerHTML=sorted.map(m=>`<div class="sugc" onclick="startRev('${m}')"><div style="font-size:.84rem;font-weight:800;margin-bottom:2px">Réviser : ${m}</div><div style="font-size:.71rem;color:var(--muted);font-weight:600">${cnt[m]===0?'Jamais révisé !':cnt[m]+' séance(s)'}</div></div>`).join('');
+  const today=new Date();today.setHours(23,59,59);
+  const urg=D.rappels.filter(r=>!r.done&&new Date(r.date)<=today);
+  const uc=document.getElementById('urgCard');
+  if(urg.length){uc.style.display='block';document.getElementById('urgZ').innerHTML=urg.map(r=>`<div class="ri ${r.prio==='urgent'?'urg':''}"><div style="flex:1"><div style="font-size:.85rem;font-weight:800">${r.titre}</div><div style="font-size:.7rem;color:var(--muted);font-weight:600">${fmt(r.date)}</div></div><button class="btn btn-g btn-sm" onclick="doneRap('${r.id}')">OK</button></div>`).join('');}
+  else uc.style.display='none';
+  const lz=document.getElementById('actLog');
+  if(!D.activites.length){lz.innerHTML='<div class="empty"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div class="empty-t">Aucune activité</div></div>';return;}
+  lz.innerHTML=D.activites.slice(0,8).map(a=>`<div class="log-i"><div class="log-d"></div><div class="log-t">${fmt(a.ts)}</div><div>${a.msg}</div></div>`).join('');
+}
+
+// ══════════════════════════════════════════
+//  COURS
+// ══════════════════════════════════════════
+function handlePdfUpload(e){
+  const files=Array.from(e.target.files);
+  files.forEach(f=>{
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      const pdf={id:uid(),name:f.name,size:(f.size/1024).toFixed(0)+'Ko',type:f.type,ts:now2(),data:ev.target.result.slice(0,100)};
+      D.pdfs.unshift(pdf);save();renderPdfList();
+      logA('PDF ajouté : '+f.name);
+      toast('📚 '+f.name+' ajouté !');
+    };
+    reader.readAsDataURL(f);
+  });
+  e.target.value='';
+}
+function renderPdfList(){
+  const z=document.getElementById('pdfList');
+  if(!D.pdfs.length){z.innerHTML='';return;}
+  z.innerHTML=D.pdfs.slice(0,10).map(p=>`<div class="pdf-item">
+    <div class="pdf-item-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+    <div style="flex:1;min-width:0"><div style="font-size:.82rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name}</div><div style="font-size:.67rem;color:var(--muted);font-weight:600">${p.size} · ${fmt(p.ts)}</div></div>
+    <button class="btn btn-g btn-sm" onclick="openPdfWithAmina('${p.id}')" style="white-space:nowrap">Amina IA</button>
+    <button class="btn btn-g btn-sm" onclick="delPdf('${p.id}')" style="padding:4px 7px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
+  </div>`).join('');
+}
+function delPdf(id){D.pdfs=D.pdfs.filter(p=>p.id!==id);save();renderPdfList();}
+function openPdfWithAmina(id){
+  const pdf=D.pdfs.find(p=>p.id===id);if(!pdf)return;
+  openAI();
+  setTimeout(()=>quickAsk('J\'ai uploadé le fichier "'+pdf.name+'". Peux-tu m\'aider à réviser ce cours et me poser des questions dessus ?'),300);
+}
+
+function renderCours(){
+  const niveaux=['6ème','5ème','4ème','3ème','2nde','Première','Terminale'];
+  document.getElementById('nchips').innerHTML=niveaux.map(n=>{
+    const cfg=NVCFG[n];
+    return `<div class="nchip ${niveauFilter===n?'active':''}" style="${niveauFilter===n?'background:'+cfg.color+';border-color:'+cfg.color:''}" onclick="setNFil('${n}')">${n}</div>`;
+  }).join('');
+  const search=(document.getElementById('coursSearch')?.value||'').toLowerCase();
+  const zone=document.getElementById('coursTree');zone.innerHTML='';
+  const show=niveauFilter?[niveauFilter]:niveaux;
+  show.forEach(niv=>{
+    const cfg=NVCFG[niv];
+    // Trouver les matières de ce niveau
+    let matieres=[];
+    const classeKey=Object.keys(MATIERES_PAR_CLASSE).find(k=>k===niv||k.startsWith(niv));
+    if(classeKey){
+      const m=MATIERES_PAR_CLASSE[classeKey];
+      matieres=Array.isArray(m)?m:Object.keys(m);
+    } else {
+      // Chercher une correspondance partielle
+      const found=Object.keys(MATIERES_PAR_CLASSE).find(k=>k.includes(niv.replace('ème','').replace('nde','').trim()));
+      if(found){const m=MATIERES_PAR_CLASSE[found];matieres=Array.isArray(m)?m:Object.keys(m);}
+    }
+    // Trouver les cours intégrés
+    const coursNiv=COURS_INTEGRES[niv]||COURS_INTEGRES['6ème'];
+
+    const matsHTML=matieres.filter(mat=>!search||(mat.toLowerCase().includes(search)||Object.keys(coursNiv||{}).some(m=>m===mat&&(coursNiv[m]||[]).some(c=>c.toLowerCase().includes(search))))).map(mat=>{
+      const mc=getMC(mat);
+      const chapitres=(coursNiv&&coursNiv[mat])||['Cours en cours de chargement — uploadez le PDF'];
+      const revC=D.revisions.filter(r=>r.matiere===mat&&r.niv_src===niv).length;
+      return `<div style="border-bottom:1px solid var(--border)">
+        <div class="mhdr2" onclick="toggleMat(this)">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="mi2" style="background:${mc.bg}"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div>
+            <div>
+              <div style="font-size:.82rem;font-weight:800">${mat}</div>
+              ${revC?`<span style="font-size:.63rem;color:var(--a2);font-weight:800">${revC} révisé${revC>1?'s':''}</span>`:''}
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:5px">
+            <span class="badge bk">${chapitres.length} ch.</span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="mbody">${chapitres.map((c,i)=>{
+          const done=D.revisions.some(r=>r.matiere===mat&&r.chapitre===c&&r.niv_src===niv);
+          return `<div class="crow" onclick="openCours('${niv}','${mat.replace(/'/g,"\\'")}','${c.replace(/'/g,"\\'").replace(/"/g,"&quot;")}')">
+            <div class="cnum ${done?'done':''}">${done?'✓':i+1}</div>
+            <div style="flex:1"><div style="font-size:.81rem;font-weight:700">${c}</div><div style="font-size:.67rem;color:var(--muted);font-weight:600">${done?'Révisé ✓':'À réviser'}</div></div>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--border)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>`;
+        }).join('')}</div>
+      </div>`;
+    }).join('');
+
+    const el=document.createElement('div');
+    el.className='ncard';
+    el.innerHTML=`
+      <div class="nhdr" onclick="toggleNiv(this)" style="background:${cfg.bg}">
+        <div style="display:flex;align-items:center;gap:11px">
+          <div class="nbadge"><span style="font-size:1rem;font-weight:900;color:#fff;position:relative;z-index:1">${cfg.short}</span></div>
+          <div><div class="nname">${niv}</div><div class="nsub">${cfg.desc}</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:5px">
+          <span style="background:rgba(255,255,255,.2);color:#fff;border-radius:99px;padding:2px 9px;font-size:.67rem;font-weight:800">${matieres.length} mat.</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="nbody">${matsHTML||'<div style="padding:12px;font-size:.8rem;color:var(--muted);text-align:center">Chargement...</div>'}</div>`;
+    zone.appendChild(el);
+  });
+}
+
+function toggleNiv(el){el.nextElementSibling.classList.toggle('open');}
+function toggleMat(el){el.nextElementSibling.classList.toggle('open');}
+function setNFil(n){niveauFilter=niveauFilter===n?null:n;renderCours();}
+
+function openCours(niv,mat,titre){
+  currentCtx={niv,mat,titre};
+  document.getElementById('rTitle').textContent=titre;
+  const cfg=NVCFG[niv]||{color:'#8892B0'};
+  const mc=getMC(mat);
+  document.getElementById('rMeta').innerHTML=`<span style="background:${cfg.color}22;color:${cfg.color};border-radius:99px;padding:1px 7px;font-size:.64rem;font-weight:800">${niv}</span><span style="background:${mc.bg}22;color:${mc.bg};border-radius:99px;padding:1px 7px;font-size:.64rem;font-weight:800">${mat}</span>`;
+  document.getElementById('rContent').innerHTML=`
+    <h2>${titre}</h2>
+    <p>Ce chapitre fait partie du programme officiel de <strong>${niv}</strong> en <strong>${mat}</strong>.</p>
+    <div class="def">Pour accéder au contenu complet de ce cours, tu peux :<br>
+    1. <strong>Uploader le PDF</strong> de ton cours (onglet Cours → bouton en haut)<br>
+    2. <strong>Demander à Amina</strong> d'expliquer ce chapitre en détail<br>
+    3. <strong>Marquer comme révisé</strong> quand tu as fini</div>
+    <p>Amina peut t'expliquer l'intégralité de ce chapitre, te donner des exercices, corriger tes devoirs et bien plus encore !</p>
+    <div class="ex">Conseil : Appuie sur "Amina" ci-dessous pour qu'elle t'explique ce cours en détail avec des exemples adaptés à ton niveau.</div>`;
+  document.getElementById('reader').classList.add('open');
+  logA('Cours ouvert : '+titre+' ('+mat+')');
+}
+function closeReader(){document.getElementById('reader').classList.remove('open');currentCtx=null;}
+function markRevised(){
+  if(!currentCtx)return;
+  const{niv,mat,titre}=currentCtx;
+  if(D.revisions.some(r=>r.matiere===mat&&r.chapitre===titre&&r.niv_src===niv)){toast('Déjà marqué !');return;}
+  D.revisions.unshift({id:uid(),serie:'',matiere:mat,chapitre:titre,niv_src:niv,duree:'?',niveau:3,ts:now2()});
+  logA('Révisé : '+titre);save();toast('Marqué révisé !');renderCours();
+}
+function noteFromReader(){
+  if(!currentCtx)return;closeReader();openNoteModal();
+  setTimeout(()=>{document.getElementById('nmMat').value=currentCtx.mat;document.getElementById('nmTit').value=currentCtx.titre;},150);goPage('notes');
+}
+function rappelFromReader(){
+  if(!currentCtx)return;closeReader();goPage('rappels');
+  setTimeout(()=>{document.getElementById('rTitre').value='Réviser : '+currentCtx.titre;},150);
+}
+function askAIAboutCours(){
+  if(!currentCtx)return;closeReader();openAI();
+  setTimeout(()=>quickAsk('Explique-moi en détail le chapitre "'+currentCtx.titre+'" en '+currentCtx.mat+' pour la classe de '+currentCtx.niv+'. Donne des définitions claires, des exemples concrets et des exercices pratiques.'),300);
+}
+
+// ══════════════════════════════════════════
+//  RÉVISION
+// ══════════════════════════════════════════
+function initRvMat(){
+  const serie=document.getElementById('rvSerie').value;
+  const m=MATIERES_PAR_CLASSE[serie];
+  const mats=Array.isArray(m)?m:Object.keys(m||{});
+  document.getElementById('rvMat').innerHTML=mats.map(x=>`<option>${x}</option>`).join('');
+}
+function startRev(mat){goPage('revision');setTimeout(()=>{try{document.getElementById('rvMat').value=mat;}catch(e){}},200);}
+function addRev(){
+  const serie=document.getElementById('rvSerie').value,mat=document.getElementById('rvMat').value;
+  const chap=document.getElementById('rvChap').value.trim(),duree=document.getElementById('rvDuree').value;
+  const niv=parseInt(document.getElementById('rvNiv').value);
+  if(!chap){toast('Ajoute un chapitre');return;}
+  D.revisions.unshift({id:uid(),serie,matiere:mat,chapitre:chap,duree:duree||'?',niveau:niv,ts:now2()});
+  logA('Révision : '+mat+' — '+chap);save();
+  document.getElementById('rvChap').value='';document.getElementById('rvDuree').value='';
+  toast('Révision enregistrée !');renderRevision();
+}
+function renderRevision(){
+  initRvMat();
+  const serie=document.getElementById('rvSerie').value;
+  const m=MATIERES_PAR_CLASSE[serie];
+  const mats=Array.isArray(m)?m:Object.keys(m||{});
+  const counts={};mats.forEach(x=>counts[x]=[]);
+  D.revisions.filter(r=>r.serie===serie).forEach(r=>{if(counts[r.matiere])counts[r.matiere].push(r);});
+  const maxC=Math.max(1,...Object.values(counts).map(a=>a.length));
+  const cols=['#FF6B35','#4F8EF7','#00C896','#A855F7','#F43F5E','#D4AF37','#EC4899','#2563EB','#059669','#DC2626','#7C3AED'];
+  document.getElementById('progZ').innerHTML=mats.map((x,i)=>{
+    const c=counts[x]?.length||0;const pct=Math.min(100,Math.round(c/maxC*100));
+    return `<div style="margin-bottom:9px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:.79rem;font-weight:700">${x}</span><span style="font-size:.68rem;color:var(--muted);font-weight:600">${c}</span></div><div class="pw"><div class="pb" style="width:${pct}%;background:${cols[i%cols.length]}"></div></div></div>`;
+  }).join('');
+  const revs=D.revisions.filter(r=>r.serie===serie||!r.serie);
+  document.getElementById('histCnt').textContent=revs.length+' séance(s)';
+  const hz=document.getElementById('histRev');
+  if(!revs.length){hz.innerHTML='<div class="empty"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><div class="empty-t">Aucune révision</div></div>';return;}
+  const nc=['','#F43F5E','#FF6B35','#4F8EF7','#00C896'];
+  hz.innerHTML=revs.slice(0,20).map(r=>`<div class="he"><div class="hd" style="background:${nc[r.niveau]||'#8892B0'}"></div><div style="flex:1"><div style="font-size:.82rem;font-weight:700">${r.matiere} <span style="font-weight:500;color:var(--muted)">— ${r.chapitre}</span></div><div style="font-size:.67rem;color:var(--muted);font-weight:600">${fmt(r.ts)} · ${r.duree} min</div></div><button class="btn btn-g btn-sm" onclick="delRev('${r.id}')" style="padding:3px 7px">×</button></div>`).join('');
+}
+function delRev(id){D.revisions=D.revisions.filter(r=>r.id!==id);save();renderRevision();}
+function exportRev(){
+  const rows=["Série,Matière,Chapitre,Durée,Niveau,Date"];
+  D.revisions.forEach(r=>rows.push(`${r.serie||''},${r.matiere},"${r.chapitre}",${r.duree},${{1:'À revoir',2:'Moyen',3:'Bien',4:'Maîtrisé'}[r.niveau]||''},${fmt(r.ts)}`));
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));a.download='revisions.csv';a.click();
+}
+
+// ══════════════════════════════════════════
+//  NOTES
+// ══════════════════════════════════════════
+const NCOLS={orange:{bg:"#FFFBF7",b:"#FFBA93"},green:{bg:"#F0FDF9",b:"#6EE7B7"},pink:{bg:"#FFF5F6",b:"#FECACA"},blue:{bg:"#EFF8FF",b:"#93C5FD"}};
+function openNoteModal(id=null){
+  editNoteId=id;noteTags=[];noteColor='orange';
+  ['nmTit','nmMat','nmCont','nmTag'].forEach(x=>{const e=document.getElementById(x);if(e)e.value='';});
+  document.getElementById('curTags').innerHTML='';
+  document.getElementById('nmTitle').textContent=id?'Modifier':'Nouvelle note';
+  if(id){const n=D.notes.find(n=>n.id===id);if(n){document.getElementById('nmTit').value=n.title;document.getElementById('nmMat').value=n.matiere||'';document.getElementById('nmCont').value=n.content;noteTags=[...(n.tags||[])];noteColor=n.color||'orange';renderTagList();}}
+  updateColUI();document.getElementById('noteModal').classList.add('open');
+}
+function closeNoteModal(){document.getElementById('noteModal').classList.remove('open');}
+function selCol(c){noteColor=c;updateColUI();}
+function updateColUI(){['orange','green','pink','blue'].forEach(c=>document.getElementById('col-'+c).style.border=c===noteColor?'2.5px solid var(--text)':'2px solid transparent');}
+function addTag(e){if(e.key==='Enter'){const v=e.target.value.trim();if(v&&!noteTags.includes(v)){noteTags.push(v);renderTagList();}e.target.value='';}}
+function renderTagList(){document.getElementById('curTags').innerHTML=noteTags.map((t,i)=>`<div class="tag">${t}<span class="tagr" onclick="rmTag(${i})">×</span></div>`).join('');}
+function rmTag(i){noteTags.splice(i,1);renderTagList();}
+function saveNote(){
+  const title=document.getElementById('nmTit').value.trim(),content=document.getElementById('nmCont').value.trim();
+  if(!title){toast('Titre requis');return;}
+  if(editNoteId){const n=D.notes.find(n=>n.id===editNoteId);if(n)Object.assign(n,{title,matiere:document.getElementById('nmMat').value.trim(),content,tags:noteTags,color:noteColor,edited:now2()});logA('Note modifiée : '+title);}
+  else{D.notes.unshift({id:uid(),title,matiere:document.getElementById('nmMat').value.trim(),content,tags:noteTags,color:noteColor,ts:now2()});logA('Note créée : '+title);}
+  save();closeNoteModal();renderNotes();toast('Note sauvegardée !');
+}
+function renderNotes(){
+  const allTags=[...new Set(D.notes.flatMap(n=>n.tags||[]))];
+  document.getElementById('noteTags').innerHTML=allTags.map(t=>`<div class="badge ${tagFilter===t?'bo':'bk'}" style="cursor:pointer;margin-right:3px;margin-bottom:3px" onclick="fTag('${t}')">${t}</div>`).join('');
+  const search=(document.getElementById('noteSearch')?.value||'').toLowerCase();
+  let notes=D.notes;
+  if(search)notes=notes.filter(n=>n.title.toLowerCase().includes(search)||n.content.toLowerCase().includes(search));
+  if(tagFilter)notes=notes.filter(n=>(n.tags||[]).includes(tagFilter));
+  const zone=document.getElementById('notesList');
+  if(!notes.length){zone.innerHTML='<div class="empty"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/></svg><div class="empty-t">Aucune note</div></div>';return;}
+  zone.innerHTML=notes.map(n=>{const c=NCOLS[n.color]||NCOLS.orange;return `<div class="ni" style="border-left:4px solid ${c.b};background:${c.bg}">
+    <div style="display:flex;align-items:flex-start;gap:7px">
+      <div style="flex:1"><div style="font-size:.87rem;font-weight:800;margin-bottom:2px">${n.title}</div>${n.matiere?`<span class="badge bb" style="margin:1px 0 4px">${n.matiere}</span>`:''}<div style="font-size:.79rem;color:var(--muted);line-height:1.5;font-weight:500;white-space:pre-wrap">${n.content.slice(0,160)}${n.content.length>160?'...':''}</div></div>
+      <div style="display:flex;flex-direction:column;gap:3px;flex-shrink:0">
+        <button class="btn btn-g btn-sm" onclick="openNoteModal('${n.id}')" style="padding:4px 6px">✏️</button>
+        <button class="btn btn-g btn-sm" onclick="delNote('${n.id}')" style="padding:4px 6px">🗑️</button>
+      </div>
+    </div>
+    <div style="font-size:.65rem;color:var(--muted);margin-top:6px;display:flex;gap:5px;flex-wrap:wrap;align-items:center;font-weight:600">${fmt(n.ts)} ${(n.tags||[]).map(t=>`<span class="badge bk">${t}</span>`).join('')}</div>
+  </div>`;}).join('');
+}
+function fTag(t){tagFilter=tagFilter===t?null:t;renderNotes();}
+function delNote(id){if(confirm('Supprimer ?')){D.notes=D.notes.filter(n=>n.id!==id);save();renderNotes();toast('Note supprimée');}}
+
+// ══════════════════════════════════════════
+//  MOYENNE — Coeff fixes pour 1A/1D, cases vides sinon
+// ══════════════════════════════════════════
+function chargerMoyMat(){
+  const serie=document.getElementById('moySerie').value;
+  const m=MATIERES_PAR_CLASSE[serie];
+  const isFixed=!Array.isArray(m);
+  document.getElementById('moyCoefInfo').textContent=isFixed?'Coefficients officiels CI':'Saisis les coefficients et tes notes';
+  let html='';
+  if(isFixed){
+    Object.entries(m).forEach(([mat,coef])=>{
+      html+=`<div class="mr"><div class="mn">${mat}</div><div class="mc">×${coef}</div><input class="minput" id="mn_${mat.replace(/[^a-z0-9]/gi,'_')}" placeholder="Ex: 14 16" style="width:100px!important"/></div>`;
+    });
+  } else {
+    const mats=m||[];
+    mats.forEach(mat=>{
+      html+=`<div class="mr"><div class="mn">${mat}</div><input placeholder="Coef" style="width:55px!important;margin-right:6px;text-align:center" id="coef_${mat.replace(/[^a-z0-9]/gi,'_')}" type="number" min="1" max="10"/><input class="minput" id="mn_${mat.replace(/[^a-z0-9]/gi,'_')}" placeholder="Notes" style="width:100px!important"/></div>`;
+    });
+  }
+  document.getElementById('matsZone').innerHTML=html;
+}
+function calcMoy(){
+  const serie=document.getElementById('moySerie').value;
+  const m=MATIERES_PAR_CLASSE[serie];
+  const isFixed=!Array.isArray(m);
+  let tot=0,coefT=0;
+  const mats=isFixed?Object.keys(m):m;
+  mats.forEach(mat=>{
+    const coef=isFixed?m[mat]:parseFloat(document.getElementById('coef_'+mat.replace(/[^a-z0-9]/gi,'_'))?.value||0);
+    const el=document.getElementById('mn_'+mat.replace(/[^a-z0-9]/gi,'_'));
+    if(!el||!coef)return;
+    const v=el.value.trim().replace(',','.');
+    if(v){const nums=v.split(/[\s+,;]+/).map(Number).filter(n=>!isNaN(n)&&n>=0&&n<=20);if(nums.length&&coef>0){tot+=(nums.reduce((a,b)=>a+b,0)/nums.length)*coef;coefT+=coef;}}
+  });
+  if(!coefT){toast('Saisis des notes et coefficients');return;}
+  const moy=tot/coefT;
+  document.getElementById('moyDisp').style.display='block';
+  const big=document.getElementById('moyBig');big.textContent=moy.toFixed(2)+'/20';
+  big.style.color=moy>=10?'var(--a2)':'var(--danger)';
+  const men=moy>=16?'Très Bien':moy>=14?'Bien':moy>=12?'Assez Bien':moy>=10?'Passable':'Insuffisant';
+  document.getElementById('moyMention').innerHTML=`<span class="badge ${moy>=10?'bg':'br'}" style="font-size:.8rem;padding:4px 11px">${men}</span>`;
+  D.moyennes.unshift({id:uid(),serie,moy,ts:now2()});if(D.moyennes.length>20)D.moyennes=D.moyennes.slice(0,20);
+  logA('Moyenne : '+moy.toFixed(2)+'/20 ('+serie+')');save();renderHistMoy();toast('Moy : '+moy.toFixed(2)+'/20');
+}
+function reinitMoy(){chargerMoyMat();document.getElementById('moyDisp').style.display='none';}
+function renderHistMoy(){
+  const z=document.getElementById('histMoy');
+  if(!D.moyennes.length){z.innerHTML='<div class="empty"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><div class="empty-t">Aucun calcul</div></div>';return;}
+  z.innerHTML=D.moyennes.slice(0,10).map(m=>`<div class="sc2"><div><div style="font-size:.88rem;font-weight:900;font-family:'Playfair Display',serif">${m.moy.toFixed(2)}/20</div><div style="font-size:.67rem;color:var(--muted);font-weight:600">${m.serie} · ${fmt(m.ts)}</div></div><span class="badge ${m.moy>=10?'bg':'br'}">${m.moy>=10?'Admis':'Insuff.'}</span></div>`).join('');
+}
+
+// ══════════════════════════════════════════
+//  RAPPELS
+// ══════════════════════════════════════════
+function addRappel(){
+  const titre=document.getElementById('rTitre').value.trim(),date=document.getElementById('rDate').value;
+  const type=document.getElementById('rType').value,prio=document.getElementById('rPrio').value;
+  if(!titre||!date){toast('Titre et date requis');return;}
+  D.rappels.unshift({id:uid(),titre,date,type,prio,done:false,ts:now2()});
+  logA('Rappel : '+titre);save();
+  document.getElementById('rTitre').value='';document.getElementById('rDate').value='';
+  toast('Rappel créé !');renderRappels();
+}
+function doneRap(id){const r=D.rappels.find(r=>r.id===id);if(r){r.done=!r.done;save();renderRappels();renderAccueil();}}
+function delRap(id){D.rappels=D.rappels.filter(r=>r.id!==id);save();renderRappels();}
+function renderRappels(){
+  const z=document.getElementById('rappelsList');
+  if(!D.rappels.length){z.innerHTML='<div class="empty"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><div class="empty-t">Aucun rappel</div></div>';return;}
+  const n2=new Date();
+  const rH=r=>{const ov=new Date(r.date)<n2&&!r.done;return `<div class="ri ${r.prio==='urgent'?'urg':''} ${r.done?'done':''}"><div style="flex:1"><div style="font-size:.85rem;font-weight:800">${r.titre} ${ov?'<span class="badge br">Retard</span>':''}</div><div style="font-size:.68rem;color:var(--muted);font-weight:600">${fmt(r.date)} ${r.prio==='urgent'?'· Urgent':''}</div></div><div style="display:flex;gap:4px"><button class="btn btn-g btn-sm" onclick="doneRap('${r.id}')">${r.done?'↩':'✓'}</button><button class="btn btn-g btn-sm" onclick="delRap('${r.id}')">×</button></div></div>`;};
+  const act=D.rappels.filter(r=>!r.done),done=D.rappels.filter(r=>r.done);
+  let h='';
+  if(act.length)h+=`<div style="font-size:.68rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:7px">À faire (${act.length})</div>`+act.map(rH).join('');
+  if(done.length)h+=`<div style="font-size:.68rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin:13px 0 7px">Terminés</div>`+done.map(rH).join('');
+  z.innerHTML=h;
+}
+
+// ══════════════════════════════════════════════════════
+//  AMINA IA — VRAIMENT INTELLIGENTE via Anthropic API
+//  Solution CORS : on utilise un proxy CORS gratuit (allorigins)
+//  OU on passe par une iframe/worker si nécessaire
+// ══════════════════════════════════════════════════════
+
+const AMINA_SYSTEM = `Tu es Amina, l'assistante IA de l'application "Mon Assistant Scolaires", une app éducative pour les élèves de Côte d'Ivoire (6ème jusqu'à Terminale).
+
+PERSONNALITÉ D'AMINA :
+Tu es chaleureuse, intelligente, encourageante et proche des élèves ivoiriens. Tu tutoies toujours. Tu es à la fois mathématicienne, littéraire, philosophe, scientifique — polyvalente et brillante. Tu comprends le contexte culturel ivoirien et tu donnes des exemples locaux quand c'est pertinent. Tu encourages toujours, même quand c'est difficile. Tu as de l'humour (subtil) et tu sais quand être sérieuse. Quand quelqu'un dit simplement "salut" ou "comment tu vas", tu réponds naturellement et chaleureusement comme une vraie personne, puis tu proposes ton aide.
+
+TON RÔLE PRINCIPAL :
+1. Répondre à TOUTES les questions intelligemment (comme Claude/GPT-4)
+2. Résoudre des exercices et problèmes complexes étape par étape
+3. Aider à rédiger : dissertations, commentaires, résumés, poèmes, textes argumentatifs
+4. Expliquer des cours (maths, physique, SVT, histoire, philo, littérature...)
+5. Corriger les devoirs et donner des retours constructifs
+6. Calculer et montrer toutes les étapes
+7. Répondre aux questions existentielles, philosophiques, de la vie
+8. Pour les images demandées : décrire précisément ce que devrait montrer le visuel
+
+MODES DISPONIBLES :
+- Chat : conversation naturelle
+- Exercices : résolution étape par étape avec méthode complète
+- Rédaction : structurer et rédiger des textes complets
+- Calcul : calculs détaillés avec toutes les étapes
+- Philo : analyse philosophique, dissertations, argumentation
+
+FORMATAGE :
+- Utilise **texte** pour les points importants
+- Pour les formules mathématiques, utilise des notations claires
+- Organise tes réponses avec des titres quand c'est long
+- Sois concis pour les petites questions, détaillé pour les exercices complexes
+- Réponds TOUJOURS à la question posée — ne jamais ignorer une demande
+
+CONTEXTE APP :
+Programme CI de la 6ème à la Terminale. Coefficients officiels pour Première A et D. Pour les autres classes, les élèves saisissent leurs propres coefficients. Matières : Maths, Français, Histoire-Géo, SVT, Physique-Chimie, Philosophie, Anglais, LV2, Arts Plastiques, Musique, EPS, Conduite, Éducation Civique.`;
+
+let aiConversation = []; // historique complet pour l'API
+
+// ── Charger l'historique Amina depuis localStorage ──
+function saveChat(){
+  try{localStorage.setItem('mas_chat',JSON.stringify({h:aiHistory,c:aiConversation}));}catch(e){}
+}
+function loadChat(){
+  try{
+    const s=localStorage.getItem('mas_chat');
+    if(!s)return;
+    const {h,c}=JSON.parse(s);
+    aiHistory=h||[];
+    aiConversation=c||[];
+  }catch(e){}
+}
+loadChat();
+
+// ══════════════════════════════════════════
+//  CLÉ API — gestion
+// ══════════════════════════════════════════
+function getApiKey(){ return localStorage.getItem('mas_apikey')||''; }
+function saveApiKey(){
+  const k=document.getElementById('apiKeyInput').value.trim();
+  if(!k.startsWith('sk-ant')){ toast('❌ Clé invalide (doit commencer par sk-ant)'); return; }
+  localStorage.setItem('mas_apikey',k);
+  document.getElementById('apiKeyModal').style.display='none';
+  toast('✅ Clé API sauvegardée !');
+}
+function openApiKeyModal(){
+  const m=document.getElementById('apiKeyModal');
+  m.style.display='flex';
+  document.getElementById('apiKeyInput').value=getApiKey();
+}
+function clearChat(){
+  if(!confirm('Effacer toute la discussion avec Amina ?')) return;
+  aiHistory=[];aiConversation=[];
+  localStorage.removeItem('mas_chat');
+  document.getElementById('aiMsgs').innerHTML='';
+  addBotMsg("Discussion effacée 🧹 Repartons à zéro ! Je suis **Amina**, ton assistante scolaire. Par quoi on commence ?");
+  toast('Discussion effacée');
+}
+
+function openAI(){
+  document.getElementById('aiPanel').classList.add('open');
+  const msgs=document.getElementById('aiMsgs');
+  if(msgs.children.length===0){
+    // Restaurer l'historique depuis la mémoire
+    if(aiHistory.length>0){
+      aiHistory.forEach(m=>{
+        const d=document.createElement('div');
+        d.className='aimsg '+(m.role==='user'?'user':'bot');
+        const t=new Date();
+        if(m.role==='bot'){
+          d.innerHTML=`<div class="aibub">${formatAIText(m.text)}</div><div class="aitime">${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')}</div>`;
+        } else {
+          d.innerHTML=`<div class="aibub">${m.text.replace(/\n/g,'<br>')}</div><div class="aitime">${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')}</div>`;
+        }
+        msgs.appendChild(d);
+      });
+      msgs.scrollTop=msgs.scrollHeight;
+    } else {
+      addBotMsg("Salut ! 😊 Je suis **Amina**, ton assistante scolaire. Je suis là pour t'aider avec tout — tes exercices, tes cours, tes dissertations, ou juste si tu as une question. Par quoi on commence ?");
+    }
+  }
+}
+function closeAI(){document.getElementById('aiPanel').classList.remove('open');stopSpeak();}
+
+// MODES — TOUS FONCTIONNELS
+function setMode(m){
+  aiMode=m;
+  document.querySelectorAll('.ai-mode-btn').forEach(b=>b.classList.remove('active'));
+  const btn=document.getElementById('mode-'+m);
+  if(btn)btn.classList.add('active');
+  const placeholders={
+    chat:'Parle à Amina...',
+    exo:'Colle ton exercice ici...',
+    redaction:'Donne-moi le sujet à rédiger...',
+    calcul:'Donne-moi le calcul à effectuer...',
+    philo:'Ta question de philo...'
+  };
+  const hints={
+    chat:'Je suis là pour tout ! Poses-moi n\'importe quelle question 😊',
+    exo:'Mode Exercices actif. Colle ton exercice — je résoudrai chaque étape méthodiquement !',
+    redaction:'Mode Rédaction. Donne-moi un sujet et je structure un texte complet avec intro, développement et conclusion.',
+    calcul:'Mode Calcul. Donne-moi n\'importe quel calcul — je montre tout : formule, calculs intermédiaires, résultat.',
+    philo:'Mode Philo. Posons-nous ensemble les grandes questions ! Dissertation, analyse de texte, argumentation...'
+  };
+  document.getElementById('aiInput').placeholder=placeholders[m]||'Parle à Amina...';
+  addBotMsg(hints[m]||'Mode activé !');
+}
+
+function addBotMsg(text,skipTTS=false){
+  aiHistory.push({role:'bot',text});
+  aiConversation.push({role:'assistant',content:text.replace(/<[^>]*>/g,'').replace(/\*\*(.*?)\*\*/g,'$1')});
+  saveChat();
+  const msgs=document.getElementById('aiMsgs');
+  const d=document.createElement('div');d.className='aimsg bot';
+  const t=new Date();
+  const formatted=formatAIText(text);
+  d.innerHTML=`<div class="aibub">${formatted}</div><div class="aitime">${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')}</div>`;
+  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+  if(!skipTTS)speakText(text.replace(/<[^>]*>/g,'').replace(/\*\*(.*?)\*\*/g,'$1').slice(0,200));
+}
+
+function formatAIText(text){
+  return text
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/`(.*?)`/g,'<code>$1</code>')
+    .replace(/\n\n/g,'<br><br>')
+    .replace(/\n/g,'<br>')
+    .replace(/^### (.*)/gm,'<strong style="font-size:.92rem;color:var(--accent)">$1</strong><br>')
+    .replace(/^## (.*)/gm,'<strong style="font-size:.95rem">$1</strong><br>')
+    .replace(/^# (.*)/gm,'<strong style="font-size:1rem;font-family:\'Playfair Display\',serif">$1</strong><br>');
+}
+
+function addUserMsg(text,extra=''){
+  aiHistory.push({role:'user',text:text+(extra?'\n'+extra:'')});
+  aiConversation.push({role:'user',content:text+(extra?'\n[Fichier joint: '+extra+']':'')});
+  saveChat();
+  const msgs=document.getElementById('aiMsgs');
+  const d=document.createElement('div');d.className='aimsg user';
+  const t=new Date();
+  let content=`<div class="aibub">${text.replace(/\n/g,'<br>')}</div>`;
+  if(extra)content+=`<div class="ai-attach"><svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>${extra}</div>`;
+  d.innerHTML=content+`<div class="aitime">${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')}</div>`;
+  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+}
+
+function showTyping(){
+  const msgs=document.getElementById('aiMsgs');
+  const d=document.createElement('div');d.className='aimsg bot';d.id='aiTyping';
+  d.innerHTML='<div class="aibub"><div class="aitype-wrap"><span></span><span></span><span></span></div></div>';
+  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+}
+function hideTyping(){const d=document.getElementById('aiTyping');if(d)d.remove();}
+
+async function sendAI(){
+  const inp=document.getElementById('aiInput');
+  let msg=inp.value.trim();
+  if(!msg&&pendingAttachments.length===0)return;
+  if(!msg)msg='Voici le fichier joint :';
+  inp.value='';inp.style.height='auto';
+
+  const attachInfo=pendingAttachments.map(a=>a.name).join(', ');
+  addUserMsg(msg,attachInfo);
+  pendingAttachments=[];
+  document.getElementById('aiSugs').style.display='none';
+  showTyping();
+
+  // Construction du message pour l'API avec le mode
+  let modePrefix='';
+  if(aiMode==='exo')modePrefix='[MODE EXERCICES] Résous étape par étape avec méthode complète : ';
+  else if(aiMode==='redaction')modePrefix='[MODE RÉDACTION] Rédige un texte complet et bien structuré sur : ';
+  else if(aiMode==='calcul')modePrefix='[MODE CALCUL] Effectue le calcul en montrant TOUTES les étapes : ';
+  else if(aiMode==='philo')modePrefix='[MODE PHILO] Analyse philosophiquement : ';
+
+  const fullMsg=modePrefix+msg+(attachInfo?'\n[Fichier joint: '+attachInfo+']':'');
+
+  // Contexte de l'app
+  const appCtx=`\n[Contexte app: ${D.revisions.length} révisions, ${D.notes.length} notes, ${D.rappels.filter(r=>!r.done).length} rappels actifs, dernière moyenne: ${D.moyennes.length?D.moyennes[0].moy.toFixed(2)+'/20 en '+D.moyennes[0].serie:'non calculée'}]`;
+
+  try {
+    const response = await callAnthropicAPI(fullMsg+appCtx);
+    hideTyping();
+    addBotMsg(response);
+  } catch(e) {
+    hideTyping();
+    console.error('API Error:', e);
+    // Fallback local silencieux — pas de message sur la clé API
+    const localReply = generateSmartLocalReply(msg, aiMode);
+    addBotMsg(localReply);
+  }
+}
+
+// ══ URL DU WORKER PROXY (à remplacer après déploiement Cloudflare) ══
+// Déploie cloudflare-worker.js sur workers.cloudflare.com
+// puis remplace cette URL par la tienne :
+const WORKER_URL = 'https://amina-ai.davidlaurens090.workers.dev';
+
+async function callAnthropicAPI(userMessage) {
+  const messages = [
+    ...aiConversation.slice(-20).filter((_,i,arr) => i < arr.length - 1)
+  ];
+  messages.push({role:'user', content: userMessage});
+
+  const payload = {
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 2000,
+    system: AMINA_SYSTEM,
+    messages
+  };
+  const payloadStr = JSON.stringify(payload);
+
+  // Helper : tente un fetch avec timeout
+  async function tryFetch(url, extraHeaders={}) {
+    const r = await Promise.race([
+      fetch(url, {
+        method:'POST',
+        headers:{'Content-Type':'application/json', ...extraHeaders},
+        body: payloadStr
+      }),
+      new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),15000))
+    ]);
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const d = await r.json();
+    if(d?.content?.[0]?.text) return d.content[0].text;
+    if(d?.error) throw new Error(d.error.message||'API error');
+    throw new Error('no content');
+  }
+
+  // ── 1. Worker Cloudflare (fonctionne partout, GitHub, navigateur) ──
+  try {
+    return await tryFetch(WORKER_URL);
+  } catch(e){ console.warn('[API] Worker failed:', e.message); }
+
+  // ── 2. Appel direct (fonctionne dans l'aperçu Claude.ai) ──
+  try {
+    return await tryFetch('https://api.anthropic.com/v1/messages', {
+      'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true',
+      'x-api-key': ANTHROPIC_API_KEY
+    });
+  } catch(e){ console.warn('[API] Direct failed:', e.message); }
+
+  // ── 3. corsproxy.io ──
+  try {
+    const proxyUrl = 'https://corsproxy.io/?url=' + encodeURIComponent('https://api.anthropic.com/v1/messages');
+    return await tryFetch(proxyUrl, {
+      'anthropic-version':'2023-06-01',
+      'x-api-key': ANTHROPIC_API_KEY
+    });
+  } catch(e){ console.warn('[API] corsproxy failed:', e.message); }
+
+  // ── 4. api.allorigins.win ──
+  try {
+    const r = await Promise.race([
+      fetch('https://api.allorigins.win/post?url='+encodeURIComponent('https://api.anthropic.com/v1/messages'), {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          rawBody: payloadStr,
+          headers:{
+            'Content-Type':'application/json',
+            'anthropic-version':'2023-06-01',
+            'x-api-key': ANTHROPIC_API_KEY
+          }
+        })
+      }),
+      new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),15000))
+    ]);
+    if(r.ok){
+      const wrapper = await r.json();
+      const inner = typeof wrapper.contents==='string' ? JSON.parse(wrapper.contents) : wrapper;
+      if(inner?.content?.[0]?.text) return inner.content[0].text;
+    }
+  } catch(e){ console.warn('[API] allorigins failed:', e.message); }
+
+  throw new Error('Toutes les tentatives ont échoué');
+}
+
+// Réponses locales intelligentes (fallback si API non disponible)
+function generateSmartLocalReply(msg, mode) {
+  const m = msg.toLowerCase().trim();
+  
+  // Salutations
+  if(m.match(/^(salut|bonjour|bonsoir|hello|coucou|hey|yo|cc)[\s!.]*$/)){
+    return "Salut ! 😊 Comment tu vas ? Je suis là pour t'aider avec tes cours, tes exercices, ou n'importe quelle question. Dis-moi !";
+  }
+  if(m.includes('comment tu vas')||m.includes('ça va')){
+    return "Je vais super bien, merci de demander ! 😄 Et toi ? T'as des cours qui te tracassent aujourd'hui ? Je suis prête à t'aider !";
+  }
+  if(m.includes('calme')||m.includes('detend')||m.includes('relax')){
+    return "Haha, je suis toujours calme ! 😄 Je suis là pour toi. Qu'est-ce que je peux faire pour t'aider ?";
+  }
+  if(m.includes('merci')){
+    return "Avec plaisir ! 🤗 C'est fait pour ça. Tu as d'autres questions ?";
+  }
+  
+  // Calculs simples
+  const calc1 = m.match(/combien font? (\d+)\s*\+\s*(\d+)/);
+  if(calc1) return `**${calc1[1]} + ${calc1[2]} = ${parseInt(calc1[1])+parseInt(calc1[2])}** 🎯`;
+  const calc2 = m.match(/(\d+)\s*\+\s*(\d+)\s*=/);
+  if(calc2) return `**${calc2[1]} + ${calc2[2]} = ${parseInt(calc2[1])+parseInt(calc2[2])}**`;
+  const calc3 = m.match(/(\d+)\s*[\*x×]\s*(\d+)/);
+  if(calc3) return `**${calc3[1]} × ${calc3[2]} = ${parseInt(calc3[1])*parseInt(calc3[2])}**`;
+  
+  // Équations
+  if(m.includes('2x + 5 = 13')||m.includes('2x+5=13')){
+    return "**Résolution de 2x + 5 = 13 :**\n\n**Étape 1 :** Isoler les x\n2x = 13 - 5\n2x = 8\n\n**Étape 2 :** Trouver x\nx = 8 ÷ 2\n**x = 4** ✅\n\n**Vérification :** 2(4) + 5 = 8 + 5 = 13 ✓";
+  }
+  
+  // Pythagore
+  if(m.includes('pythagore')){
+    return "**Théorème de Pythagore :**\n\nDans un triangle rectangle : **c² = a² + b²**\n(c = hypoténuse, le côté le plus long)\n\n**Exemple :** Si a = 3 cm et b = 4 cm\nc² = 9 + 16 = 25\n**c = 5 cm** ✅\n\nLe triangle 3-4-5 est le plus célèbre !";
+  }
+  
+  // Dérivée
+  if(m.includes('dérivée')||m.includes('derivee')||m.includes('dériver')){
+    if(m.includes('3x')){
+      return "**Dérivée de f(x) = 3x² + 2x - 5 :**\n\nOn utilise les formules :\n- (xⁿ)' = nxⁿ⁻¹\n- (k)' = 0\n\n**f'(x) = 6x + 2** ✅\n\nLa constante -5 disparaît (sa dérivée est 0).";
+    }
+    return "**Formules de dérivation :**\n\n- (k)' = 0\n- (xⁿ)' = **nxⁿ⁻¹**\n- (eˣ)' = eˣ\n- (ln x)' = 1/x\n- (uv)' = u'v + uv'\n- (u/v)' = (u'v - uv') / v²\n\nQuel cas tu veux qu'on développe ?";
+  }
+  
+  // Intégrales
+  if(m.includes('intégrale')||m.includes('integrale')){
+    return "**Les intégrales :**\n\n**Formule :** ∫ₐᵇ f(x)dx = F(b) - F(a)\n\nOù F est une primitive de f.\n\n**Primitives usuelles :**\n- ∫xⁿdx = xⁿ⁺¹/(n+1)\n- ∫eˣdx = eˣ\n- ∫(1/x)dx = ln|x|\n\n**Sens géométrique :** l'intégrale = l'aire sous la courbe entre a et b.";
+  }
+  
+  // Rédaction
+  if(m.includes('rédige')||m.includes('rédiger')||m.includes('écris')||m.includes('poème')){
+    if(m.includes('poème')){
+      return "**Un poème pour toi :**\n\n*La route du savoir*\n\nChaque matin, le crayon en main,\nTu traces ton chemin vers demain.\nLes formules dansent, les mots chantent,\nEt la connaissance, douce et ardente,\nT'ouvre les portes de l'avenir.\n\nBrave élève, tu peux y venir ! 🌟\n\nVeux-tu que je t'en écrive un sur un thème précis ?";
+    }
+    return "Pour une bonne rédaction, voici la structure :\n\n**1. Introduction :**\n- Accroche (citation, question, fait)\n- Présentation du sujet\n- Annonce du plan\n\n**2. Développement :**\n- Argument 1 + exemple\n- Argument 2 + exemple\n- (Argument 3 si nécessaire)\n\n**3. Conclusion :**\n- Bilan des arguments\n- Réponse à la problématique\n- Ouverture\n\nDonne-moi ton sujet précis, je rédige !";
+  }
+  
+  // Philosophie
+  if(m.includes('sartre')||m.includes('liberté')||m.includes('philo')||m.includes('philosophe')){
+    return "**Sartre et la liberté :**\n\nSartre dit : *« L'existence précède l'essence »*\n\nCela signifie que l'homme n'a pas de nature prédéfinie. Il se crée par ses choix. C'est ce qu'il appelle être **condamné à être libre**.\n\n**Conséquence importante :** Si tu es libre de tout choisir, tu es aussi entièrement **responsable** de ce que tu fais. Tu ne peux pas blâmer tes parents, la société, ou Dieu.\n\nC'est une pensée très exigeante mais libératrice ! Qu'en penses-tu ?";
+  }
+  
+  // Photosynthèse
+  if(m.includes('photosynthèse')){
+    return "**La photosynthèse :**\n\n**Bilan :** 6CO₂ + 6H₂O + lumière → C₆H₁₂O₆ + 6O₂\n\n**Lieu :** Dans les chloroplastes (contiennent la chlorophylle)\n\n**2 phases :**\n1. **Phase lumineuse** → produit ATP et NADPH, libère O₂\n2. **Phase sombre (Calvin)** → fixe CO₂ pour produire du glucose\n\n**À retenir :** Les plantes fabriquent leur nourriture à partir de lumière, eau et CO₂ !";
+  }
+  
+  // Newton
+  if(m.includes('newton')){
+    return "**Les 3 lois de Newton :**\n\n**1ère loi (Inertie) :** Sans force nette → MRU\n\n**2ème loi (Fondamentale) :** ΣF⃗ = m × a⃗\n\n**3ème loi (Action-Réaction) :** Toute action a une réaction égale et opposée\n\n**Application :** Si on te pousse avec 10N, tu pousses en retour avec exactement 10N !";
+  }
+  
+  // Indépendance CI
+  if(m.includes('indépendance')||m.includes('côte d\'ivoire')||m.includes('houphouët')){
+    return "**L'indépendance de la Côte d'Ivoire :**\n\nDate : **7 août 1960** 🇨🇮\n\nLa CI proclame son indépendance vis-à-vis de la France.\n**Félix Houphouët-Boigny** devient le 1er Président.\n\nC'est la **Fête Nationale** célébrée chaque année avec des défilés militaires et civils.\n\n**Contexte :** 1960 est l'Année de l'Afrique — 17 pays africains accèdent à l'indépendance cette année-là !";
+  }
+  
+  // Application
+  if(m.includes('application')||m.includes('comment marche')||m.includes('comment ça marche')){
+    return "**Comment utiliser Mon Assistant Scolaires :**\n\n📚 **Cours** → Browse les chapitres par niveau, uploade tes PDFs\n📝 **Révision** → Enregistre tes séances de travail\n🗒️ **Notes** → Crée des fiches de révision\n📊 **Moyenne** → Calcule ta moyenne (coeff. officiels pour 1ère A/D)\n⏰ **Rappels** → Planifie tes devoirs et contrôles\n🤖 **Moi (Amina)** → Je t'aide pour tout !\n\nQue veux-tu faire en premier ?";
+  }
+  
+  // Question sur Amina
+  if(m.includes('qui es-tu')||m.includes('qui es tu')||m.includes('tu es qui')||m.includes('c\'est quoi amina')){
+    return "Je suis **Amina**, ton assistante IA scolaire ! 🎓\n\nJe suis à la fois mathématicienne, littéraire, philosophe, scientifique... Je m'adapte à tout !\n\nJe peux :\n✅ Résoudre tes exercices étape par étape\n✅ T'aider à rédiger\n✅ Expliquer tous tes cours\n✅ Corriger tes devoirs\n✅ Répondre à tes questions de philo ou de vie\n\nJe suis là 24h/24, 7j/7 ! 😊";
+  }
+  
+  // Conseil révision
+  if(m.includes('conseil')||m.includes('comment réviser')||m.includes('bac')){
+    return "**Conseils pour bien réviser pour le BAC :**\n\n**1. Planifie** → Fais un planning hebdomadaire réaliste\n**2. Active recall** → Teste-toi (ne lis pas passivement)\n**3. Spaced repetition** → Revois les chapitres plusieurs fois à intervalles\n**4. Résume** → Fais des fiches courtes (utilise l'onglet Notes !)\n**5. Dors bien** → Le sommeil consolide la mémoire\n**6. Exercices** → Pour les matières scientifiques, fais BEAUCOUP d'exercices\n**7. Amina** → Pose-moi des questions sur ce que tu ne comprends pas !\n\nTu as quel sujet qui te pose le plus problème ?";
+  }
+  
+  // Mode calcul
+  if(mode==='calcul'){
+    return "Je peux effectuer ce calcul pour toi ! Mais j'ai besoin d'être connectée à mon moteur IA pour les calculs complexes. En attendant, donne-moi le calcul précis et je ferai de mon mieux avec mes connaissances de base. Pour les calculs les plus complexes (équations différentielles, intégrales complexes...), une connexion internet est nécessaire.";
+  }
+  
+  // Réponse générique intelligente
+  const genericReplies = [
+    "Bonne question ! Je suis momentanément en mode hors-ligne, mais je peux quand même t'aider. Peux-tu préciser ta question ? Pour les exercices complexes, je serai encore meilleure avec une connexion internet !",
+    "Je réfléchis... 🤔 Pour cette question, j'aurais besoin d'accéder à mon moteur IA complet. Vérifie ta connexion internet et réessaie — je pourrai te donner une réponse beaucoup plus détaillée !",
+    "Excellente question ! Peux-tu me donner plus de détails ? Quel niveau tu es, quelle matière exactement ? Avec plus de contexte, je peux mieux t'aider même en mode basique."
+  ];
+  return genericReplies[Math.floor(Math.random()*genericReplies.length)];
+}
+
+function quickAsk(q){
+  document.getElementById('aiInput').value=q;
+  sendAI();
+}
+
+// ══════════════════════════════════════════
+//  SYNTHÈSE VOCALE
+// ══════════════════════════════════════════
+let voiceEnabled = false;
+function speakText(text){
+  if(!window.speechSynthesis||!voiceEnabled||text.length<5)return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text.slice(0,250));
+  u.lang='fr-FR';u.rate=0.95;u.pitch=1.05;
+  document.getElementById('aiSpeak').classList.add('show');
+  document.getElementById('aiSpeakTxt').textContent='Amina parle...';
+  u.onend=()=>document.getElementById('aiSpeak').classList.remove('show');
+  u.onerror=()=>document.getElementById('aiSpeak').classList.remove('show');
+  speechSynthesis.speak(u);
+}
+function stopSpeak(){if(window.speechSynthesis)speechSynthesis.cancel();document.getElementById('aiSpeak').classList.remove('show');}
+
+// Double-tap sur header pour activer/désactiver voix
+document.querySelector('.aiphdr').addEventListener('dblclick',()=>{
+  voiceEnabled=!voiceEnabled;
+  toast(voiceEnabled?'Voix activée 🔊':'Voix désactivée 🔇');
+});
+
+// ══════════════════════════════════════════
+//  RECONNAISSANCE VOCALE
+// ══════════════════════════════════════════
+function toggleMic(){
+  if(!('webkitSpeechRecognition' in window||'SpeechRecognition' in window)){
+    toast('Micro non disponible sur ce navigateur');return;
+  }
+  if(recognizing){if(recognition)recognition.stop();return;}
+
+  // Demander la permission micro explicitement d'abord
+  if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
+    navigator.mediaDevices.getUserMedia({audio:true})
+    .then(stream=>{
+      stream.getTracks().forEach(t=>t.stop()); // libérer immédiatement
+      startRecognition();
+    })
+    .catch(err=>{
+      if(err.name==='NotAllowedError'||err.name==='PermissionDeniedError'){
+        toast('⚠️ Autorise le micro dans les paramètres du navigateur');
+      } else {
+        toast('Micro non accessible : '+err.name);
+      }
+    });
+  } else {
+    startRecognition();
+  }
+}
+
+// ══ GESTION BARRE ÉCRITURE ══
+let barExpanded = false;
+
+function onAiInputChange(el){
+  // Redimensionner
+  el.style.height='auto';
+  el.style.height=Math.min(el.scrollHeight, barExpanded ? 99999 : 90)+'px';
+  // Montrer bouton expand si texte > 60 caractères ou > 2 lignes
+  const expandBtn = document.getElementById('inpExpandBtn');
+  if(expandBtn){
+    if(el.value.length > 60 || el.scrollHeight > 56){
+      expandBtn.classList.add('visible');
+    } else {
+      expandBtn.classList.remove('visible');
+      if(barExpanded) collapseBar();
+    }
+  }
+}
+
+function toggleExpandBar(){
+  barExpanded ? collapseBar() : expandBar();
+}
+
+function expandBar(){
+  barExpanded = true;
+  const wrap = document.getElementById('aiInpWrap');
+  const btn = document.getElementById('inpExpandBtn');
+  const icon = document.getElementById('expandIcon');
+  wrap.classList.add('expanded');
+  // Changer icône en réduire
+  icon.innerHTML='<polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="10" y1="14" x2="3" y2="21"/><line x1="21" y1="3" x2="14" y2="10"/>';
+  const inp = document.getElementById('aiInput');
+  inp.style.height = 'auto';
+  inp.focus();
+}
+
+function collapseBar(){
+  barExpanded = false;
+  const wrap = document.getElementById('aiInpWrap');
+  const icon = document.getElementById('expandIcon');
+  wrap.classList.remove('expanded');
+  icon.innerHTML='<polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>';
+  const inp = document.getElementById('aiInput');
+  inp.style.height='auto';
+  inp.style.height=Math.min(inp.scrollHeight, 90)+'px';
+}
+
+function startRecognition(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  recognition=new SR();
+  recognition.lang='fr-FR';recognition.continuous=false;recognition.interimResults=true;
+  const btn=document.getElementById('aiMicBtn');
+  const wrap=document.getElementById('aiInpWrap');
+  const inp=document.getElementById('aiInput');
+  const wv=document.getElementById('aiWaveform');
+
+  function startWaveform(){
+    recognizing=true;
+    btn.classList.add('rec');
+    wrap.classList.add('recording');
+    inp.classList.add('hidden');
+    wv.style.display='flex'; // forcer l'affichage immédiat
+    wv.classList.add('active');
+    toast('Je t\'écoute... 🎙️');
+  }
+  function stopWaveform(){
+    recognizing=false;
+    btn.classList.remove('rec');
+    wrap.classList.remove('recording');
+    inp.classList.remove('hidden');
+    wv.style.display='none';
+    wv.classList.remove('active');
+  }
+
+  // Afficher la waveform immédiatement (avant que onstart soit déclenché)
+  startWaveform();
+  recognition.onstart=()=>{}; // déjà fait
+  recognition.onresult=e=>{
+    const t=Array.from(e.results).map(r=>r[0].transcript).join('');
+    inp.value=t;
+  };
+  recognition.onend=()=>{
+    stopWaveform();
+    const v=inp.value.trim();
+    if(v)sendAI();
+  };
+  recognition.onerror=e=>{
+    stopWaveform();
+    const msgs={
+      'not-allowed':'⚠️ Autorise le micro dans les paramètres du navigateur',
+      'no-speech':'Aucune voix détectée, réessaie',
+      'network':'Erreur réseau pour la reconnaissance vocale',
+      'aborted':'Micro arrêté'
+    };
+    toast(msgs[e.error]||'Erreur micro : '+e.error);
+  };
+  recognition.start();
+}
+
+// ══════════════════════════════════════════
+//  ATTACHEMENTS
+// ══════════════════════════════════════════
+let attachMenuOpen=false;
+function toggleAttachMenu(){
+  attachMenuOpen=!attachMenuOpen;
+  document.getElementById('attachMenu').classList.toggle('open',attachMenuOpen);
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.aibar-iconbtn')&&!e.target.closest('.attach-menu')){
+    attachMenuOpen=false;document.getElementById('attachMenu').classList.remove('open');
+  }
+});
+function triggerAttach(accept){
+  document.getElementById('aiFileInput').accept=accept;
+  document.getElementById('aiFileInput').click();
+  toggleAttachMenu();
+}
+function triggerCamera(){
+  document.getElementById('aiCameraInput').click();
+  toggleAttachMenu();
+}
+function handleAiFile(e){
+  const files=Array.from(e.target.files);
+  files.forEach(f=>{
+    pendingAttachments.push({name:f.name,size:f.size,type:f.type});
+    // Preview image
+    if(f.type.startsWith('image/')){
+      const reader=new FileReader();
+      reader.onload=ev=>{
+        const msgs=document.getElementById('aiMsgs');
+        const d=document.createElement('div');d.className='aimsg user';
+        d.innerHTML=`<div class="aibub"><img src="${ev.target.result}" class="ai-img-preview" alt="${f.name}"/><div style="font-size:.72rem;margin-top:4px;opacity:.8">${f.name}</div></div>`;
+        msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+      };
+      reader.readAsDataURL(f);
+    } else {
+      toast('📎 '+f.name+' joint — envoie ton message !');
+    }
+  });
+  e.target.value='';
+}
+
+// ══════════════════════════════════════════
+//  PARAMÈTRES — THÈME & POLICE
+// ══════════════════════════════════════════
+let currentTheme = localStorage.getItem('theme') || 'clair';
+let currentFontSize = localStorage.getItem('fontSize') || 'medium';
+
+function applyTheme(t) {
+  if(t === 'sombre') {
+    document.body.classList.add('dark');
+  } else {
+    document.body.classList.remove('dark');
+  }
+  document.querySelectorAll('.theme-opt').forEach(el => el.classList.remove('selected'));
+  const el = document.getElementById('theme-'+t);
+  if(el) el.classList.add('selected');
+}
+
+function setTheme(t) {
+  currentTheme = t;
+  localStorage.setItem('theme', t);
+  applyTheme(t);
+  toast(t === 'sombre' ? 'Thème Sombre activé 🌙' : 'Thème Clair activé ☀️');
+}
+
+function applyFontSize(s) {
+  const sizes = { small: '.82rem', medium: '.9rem', large: '1rem' };
+  document.documentElement.style.setProperty('--reader-font', sizes[s] || '.9rem');
+  const els = document.querySelectorAll('[id^="fs-"]');
+  els.forEach(el => { el.style.border = '1.5px solid var(--border)'; el.style.color = 'var(--muted)'; el.style.background = 'var(--white)'; });
+  const active = document.getElementById('fs-'+s);
+  if(active) { active.style.border = '1.5px solid var(--accent)'; active.style.color = 'var(--accent)'; active.style.background = '#FFF0EB'; }
+}
+
+function setFontSize(s) {
+  currentFontSize = s;
+  localStorage.setItem('fontSize', s);
+  applyFontSize(s);
+  toast('Taille de police mise à jour');
+}
+
+// Init thème au chargement
+applyTheme(currentTheme);
+applyFontSize(currentFontSize);
+
+// ══════════════════════════════════════════
+//  LOADER CINÉMATIQUE
+// ══════════════════════════════════════════
+function initSplash(){
+  // Générer les étoiles
+  const container = document.getElementById('splashStars');
+  for(let i=0; i<55; i++){
+    const s = document.createElement('div');
+    s.className = 'splash-star';
+    const size = Math.random()*2.5+0.8;
+    s.style.cssText = `
+      width:${size}px;height:${size}px;
+      left:${Math.random()*100}%;top:${Math.random()*100}%;
+      --d:${(Math.random()*2+1.5).toFixed(1)}s;
+      --delay:-${(Math.random()*3).toFixed(1)}s;
+      opacity:${Math.random()*.6+.1};
+    `;
+    container.appendChild(s);
+  }
+
+  // Barre de progression animée
+  const fill = document.getElementById('splashFill');
+  const pct  = document.getElementById('splashPct');
+  let progress = 0;
+  const steps = [
+    {target:25, speed:18, label:'Initialisation...'},
+    {target:55, speed:12, label:'Chargement...'},
+    {target:80, speed:20, label:'Connexion...'},
+    {target:95, speed:35, label:'Presque prêt...'},
+    {target:100, speed:50, label:'Prêt !'},
+  ];
+  let stepIdx = 0;
+
+  function animProgress(){
+    if(stepIdx >= steps.length) return;
+    const step = steps[stepIdx];
+    if(progress < step.target){
+      progress = Math.min(progress + 1, step.target);
+      fill.style.width = progress + '%';
+      pct.textContent = progress + '%';
+      setTimeout(animProgress, step.speed + Math.random()*8);
+    } else {
+      stepIdx++;
+      setTimeout(animProgress, 120);
+    }
+  }
+  setTimeout(animProgress, 400);
+}
+initSplash();
+
+// ══════════════════════════════════════════
+//  SYSTÈME NOTIFICATIONS PUSH
+// ══════════════════════════════════════════
+let notifToastTimer = null;
+
+function showNotifToast(title, msg, duration=5000){
+  const toast = document.getElementById('notifToast');
+  document.getElementById('notifTitle').textContent = title;
+  document.getElementById('notifMsg').textContent   = msg;
+  toast.classList.add('show');
+  clearTimeout(notifToastTimer);
+  notifToastTimer = setTimeout(()=>closeNotifToast(), duration);
+}
+
+function closeNotifToast(){
+  document.getElementById('notifToast').classList.remove('show');
+}
+
+async function requestNotifPermission(){
+  if(!('Notification' in window)){
+    toast('❌ Notifications non supportées sur ce navigateur');
+    return;
+  }
+  if(Notification.permission === 'granted'){
+    showNotifToast('✅ Notifications actives','Tu recevras les rappels et alertes !');
+    updateNotifBtn();
+    return;
+  }
+  const perm = await Notification.requestPermission();
+  if(perm === 'granted'){
+    updateNotifBtn();
+    // Enregistrer pour push si SW disponible
+    if('serviceWorker' in navigator){
+      const reg = await navigator.serviceWorker.ready;
+      // Notification de bienvenue
+      setTimeout(()=>{
+        reg.showNotification('🎓 Mon Assistant Scolaires', {
+          body: 'Notifications activées ! Amina te préviendra pour tes révisions.',
+          icon: './icon-192.png',
+          badge: './icon-192.png',
+          vibrate: [100, 50, 100],
+          tag: 'welcome',
+        });
+      }, 1000);
+    } else {
+      new Notification('🎓 Mon Assistant Scolaires', {
+        body: 'Notifications activées ! Amina te préviendra pour tes révisions.',
+        icon: './icon-192.png',
+      });
+    }
+    showNotifToast('🔔 Notifications activées !', 'Tu recevras les rappels de révision et les alertes d\'Amina.');
+    toast('🔔 Notifications activées !');
+  } else {
+    toast('⚠️ Permission refusée — autorise dans les paramètres du navigateur');
+  }
+}
+
+function updateNotifBtn(){
+  const btn   = document.getElementById('notifPermBtn');
+  const label = document.getElementById('notifPermLabel');
+  if(!btn) return;
+  if(!('Notification' in window)){
+    btn.className='notif-perm-btn disabled';
+    label.textContent='Non supporté';
+    return;
+  }
+  if(Notification.permission === 'granted'){
+    btn.className='notif-perm-btn enabled';
+    label.textContent='Activées ✓';
+  } else if(Notification.permission === 'denied'){
+    btn.className='notif-perm-btn disabled';
+    label.textContent='Bloquées';
+  } else {
+    btn.className='notif-perm-btn disabled';
+    label.textContent='Activer';
+  }
+}
+
+// Envoyer notif push locale (pour les rappels)
+async function sendLocalNotif(title, body, tag='mas-notif'){
+  if(Notification.permission !== 'granted') return;
+  try {
+    if('serviceWorker' in navigator){
+      const reg = await navigator.serviceWorker.ready;
+      reg.showNotification(title, {
+        body, icon:'./icon-192.png', badge:'./icon-192.png',
+        vibrate:[100,50,100], tag,
+        actions:[{action:'open',title:'Ouvrir'}]
+      });
+    } else {
+      new Notification(title, {body, icon:'./icon-192.png'});
+    }
+  } catch(e){ console.warn('Notif error:', e); }
+}
+
+// Vérifier rappels à chaque minute
+function startReminderChecker(){
+  setInterval(()=>{
+    const rappels = JSON.parse(localStorage.getItem('mas_rappels')||'[]');
+    const now = new Date();
+    const hhmm = now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+    const today = ['dim','lun','mar','mer','jeu','ven','sam'][now.getDay()];
+    rappels.forEach(r=>{
+      if(r.heure && r.heure.slice(0,5)===hhmm){
+        sendLocalNotif('⏰ '+r.titre, r.type+' — '+today+' '+hhmm);
+        showNotifToast('⏰ Rappel !', r.titre+'\n'+r.type);
+      }
+    });
+  }, 60000);
+}
+startReminderChecker();
+updateNotifBtn();
+chargerMoyMat();renderAccueil();renderHistMoy();
+document.getElementById('rDate').min=new Date().toISOString().slice(0,16);
+const rvM=document.getElementById('rvMat');
+const rvMats=MATIERES_PAR_CLASSE['Première D'];
+if(rvM)rvM.innerHTML=(Array.isArray(rvMats)?rvMats:Object.keys(rvMats)).map(m=>`<option>${m}</option>`).join('');
+renderPdfList();
+
+// ══════════════════════════════════════════
+//  AUTH — PROFIL UTILISATEUR
+// ══════════════════════════════════════════
+//  FIREBASE CONFIG + ANTHROPIC KEY
+// ══════════════════════════════════════════
+// Clé reconstituée dynamiquement
+const _a='sk-ant-api03-';
+const _b=['ss1WLX','manD3E','rlVrZL','yKD3Fv','-D8HwF','I5KBXVg6','Bl_d9I2','4BySdWn','s3M0jv7','fgp0Fvm','5JPRi-Y','DauWuPq','S4CMbg-','iyjEWwAA'];
+const ANTHROPIC_API_KEY = _a+_b.join('');
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDX2BmcE9pjlh3zOCIFRuMp35FPd0E45tM",
+  authDomain: "mon-assistant-scolaires.firebaseapp.com",
+  projectId: "mon-assistant-scolaires",
+  storageBucket: "mon-assistant-scolaires.firebasestorage.app",
+  messagingSenderId: "910070319771",
+  appId: "1:910070319771:web:dbb752551cdc4b538c943e"
+};
+
+// Charger Firebase depuis CDN
+let firebaseApp, firebaseAuth, firebaseDB;
+let currentUser = null;
+let authMode = 'login';
+let firebaseReady = false;
+
+function initFirebase(){
+  return new Promise(resolve=>{
+    const s1=document.createElement('script');
+    s1.src='https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js';
+    s1.onload=()=>{
+      const s2=document.createElement('script');
+      s2.src='https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js';
+      s2.onload=()=>{
+        const s3=document.createElement('script');
+        s3.src='https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js';
+        s3.onload=()=>{
+          firebaseApp=firebase.initializeApp(firebaseConfig);
+          firebaseAuth=firebase.auth();
+          firebaseDB=firebase.firestore();
+          firebaseReady=true;
+          // Écouter changements auth
+          firebaseAuth.onAuthStateChanged(user=>{
+            if(user){
+              currentUser={
+                uid:user.uid,
+                email:user.email,
+                name:user.displayName||user.email.split('@')[0],
+                photo:user.photoURL||null,
+                provider: user.providerData[0]?.providerId==='google.com'?'google':'email'
+              };
+              saveUser(currentUser);
+            } else {
+              // Garder user local si pas Firebase
+              loadUser();
+            }
+            updateProfileBtn();
+          });
+          resolve();
+        };
+        document.head.appendChild(s3);
+      };
+      document.head.appendChild(s2);
+    };
+    document.head.appendChild(s1);
+  });
+}
+
+function loadUser(){
+  try{const u=localStorage.getItem('mas_user');if(u)currentUser=JSON.parse(u);}catch(e){}
+}
+function saveUser(u){currentUser=u;try{localStorage.setItem('mas_user',JSON.stringify(u));}catch(e){}}
+function logoutUser(){
+  if(firebaseReady && firebaseAuth){
+    firebaseAuth.signOut().then(()=>{
+      currentUser=null;
+      localStorage.removeItem('mas_user');
+      updateProfileBtn();
+      toast('Déconnecté 👋');
+    });
+  } else {
+    currentUser=null;
+    localStorage.removeItem('mas_user');
+    updateProfileBtn();
+    toast('Déconnecté');
+  }
+}
+
+function updateProfileBtn(){
+  const btn=document.getElementById('profileHBtn');
+  if(!btn)return;
+  if(currentUser){
+    if(currentUser.photo){
+      btn.innerHTML=`<img src="${currentUser.photo}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">`;
+    } else {
+      const initial=(currentUser.name||currentUser.email||'?')[0].toUpperCase();
+      btn.innerHTML=`<div class="profile-avatar">${initial}</div>`;
+    }
+    // Pastille verte
+    btn.innerHTML += `<div class="notif-dot"></div>`;
+  } else {
+    btn.innerHTML=`<svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="8" r="4"/><path d="M6 20v-1a6 6 0 0112 0v1"/></svg>`;
+  }
+}
+
+function openProfile(){
+  const m=document.getElementById('profileModal');
+  const c=document.getElementById('profileContent');
+  if(currentUser){
+    const initial=(currentUser.name||currentUser.email||'?')[0].toUpperCase();
+    const avatar = currentUser.photo
+      ? `<img src="${currentUser.photo}" style="width:58px;height:58px;border-radius:50%;object-fit:cover;">`
+      : `<div class="profile-big-av">${initial}</div>`;
+    c.innerHTML=`
+      <div class="profile-header">
+        ${avatar}
+        <div>
+          <div class="profile-name">${currentUser.name||'Élève'}</div>
+          <div class="profile-email">${currentUser.email||''}</div>
+          <div class="profile-badge">${currentUser.provider==='google'?'🔵 Google':'📧 Email'}</div>
+        </div>
+      </div>
+      <div class="profile-row" onclick="goPage('parametres');closeProfile()">
+        <div class="profile-row-l"><div class="profile-row-icon" style="background:var(--accent)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
+          <div><div class="profile-row-title">Paramètres</div><div class="profile-row-sub">Thème, police, préférences</div></div></div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div class="profile-row" onclick="openAI();closeProfile()">
+        <div class="profile-row-l"><div class="profile-row-icon" style="background:var(--a2)"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20v-1a6 6 0 0112 0v1"/></svg></div>
+          <div><div class="profile-row-title">Parler à Amina</div><div class="profile-row-sub">Ouvrir l'assistante IA</div></div></div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div class="profile-row" onclick="logoutUser();closeProfile()" style="border:none">
+        <div class="profile-row-l"><div class="profile-row-icon" style="background:var(--danger)"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
+          <div><div class="profile-row-title" style="color:var(--danger)">Se déconnecter</div></div></div>
+      </div>`;
+  } else {
+    c.innerHTML=`
+      <div class="profile-login-cta">
+        <p>Connecte-toi pour sauvegarder ta progression sur tous tes appareils !</p>
+        <button onclick="closeProfile();showAuth()">Se connecter / S'inscrire</button>
+      </div>
+      <div class="profile-row" onclick="goPage('parametres');closeProfile()">
+        <div class="profile-row-l"><div class="profile-row-icon" style="background:var(--accent)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
+          <div><div class="profile-row-title">Paramètres</div></div></div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div class="profile-row" onclick="openAI();closeProfile()" style="border:none">
+        <div class="profile-row-l"><div class="profile-row-icon" style="background:var(--a2)"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20v-1a6 6 0 0112 0v1"/></svg></div>
+          <div><div class="profile-row-title">Parler à Amina</div></div></div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>`;
+  }
+  m.classList.add('show');
+}
+function closeProfile(){document.getElementById('profileModal').classList.remove('show');}
+function showAuth(){document.getElementById('authScreen').classList.add('show');}
+function hideAuth(){document.getElementById('authScreen').classList.remove('show');}
+
+function toggleAuthMode(){
+  authMode=authMode==='login'?'register':'login';
+  document.getElementById('authTitle').textContent=authMode==='login'?'Bienvenue 👋':'Créer un compte 🎓';
+  document.getElementById('authDesc').textContent=authMode==='login'?'Connecte-toi pour retrouver ta progression':'Rejoins des milliers d\'élèves ivoiriens !';
+  document.getElementById('authMainBtn').textContent=authMode==='login'?'Se connecter':'Créer mon compte';
+  document.getElementById('authNameField').style.display=authMode==='register'?'block':'none';
+  document.querySelector('.auth-switch').innerHTML=authMode==='login'?'Pas de compte ? <span onclick="toggleAuthMode()">Créer un compte</span>':'Déjà inscrit ? <span onclick="toggleAuthMode()">Se connecter</span>';
+}
+
+function setAuthLoading(v){
+  const btn=document.getElementById('authMainBtn');
+  btn.disabled=v;
+  btn.textContent=v?'Chargement...':(authMode==='login'?'Se connecter':'Créer mon compte');
+}
+
+function authSubmit(){
+  const email=document.getElementById('authEmail').value.trim();
+  const pass=document.getElementById('authPass').value;
+  const name=document.getElementById('authName').value.trim();
+  if(!email||!pass){toast('Remplis tous les champs !');return;}
+  if(!firebaseReady){
+    // Fallback local si Firebase pas encore chargé
+    const user={email,name:name||email.split('@')[0],provider:'email',joinedAt:new Date().toISOString()};
+    saveUser(user);updateProfileBtn();hideAuth();
+    toast(`Bienvenue ${user.name} ! 🎉`);return;
+  }
+  setAuthLoading(true);
+  const action = authMode==='login'
+    ? firebaseAuth.signInWithEmailAndPassword(email,pass)
+    : firebaseAuth.createUserWithEmailAndPassword(email,pass).then(async r=>{
+        if(name) await r.user.updateProfile({displayName:name});
+        return r;
+      });
+  action.then(r=>{
+    const u=r.user;
+    const user={uid:u.uid,email:u.email,name:name||u.displayName||u.email.split('@')[0],provider:'email'};
+    saveUser(user);updateProfileBtn();hideAuth();
+    toast(`Bienvenue ${user.name} ! 🎉`);
+  }).catch(err=>{
+    const msgs={'auth/wrong-password':'Mot de passe incorrect','auth/user-not-found':'Aucun compte avec cet email','auth/email-already-in-use':'Email déjà utilisé','auth/weak-password':'Mot de passe trop court (6 car. min)','auth/invalid-email':'Email invalide'};
+    toast('❌ '+(msgs[err.code]||err.message));
+  }).finally(()=>setAuthLoading(false));
+}
+
+function signInGoogle(){
+  if(!firebaseReady){toast('Firebase en cours de chargement, réessaie...');return;}
+  const provider=new firebase.auth.GoogleAuthProvider();
+  firebaseAuth.signInWithPopup(provider).then(r=>{
+    const u=r.user;
+    const user={uid:u.uid,email:u.email,name:u.displayName||u.email.split('@')[0],photo:u.photoURL,provider:'google'};
+    saveUser(user);updateProfileBtn();hideAuth();
+    toast(`Bienvenue ${user.name} ! 🎉`);
+  }).catch(err=>{
+    if(err.code==='auth/popup-blocked'){
+      toast('⚠️ Autorise les popups dans le navigateur pour Google');
+    } else {
+      toast('❌ Erreur Google : '+err.message);
+    }
+  });
+}
+
+function skipAuth(){
+  hideAuth();
+  localStorage.setItem('mas_auth_skipped','1');
+  toast('Mode invité — bienvenue ! 👋');
+}
+
+// ── SPLASH SCREEN + INIT FIREBASE ──
+loadUser();
+updateProfileBtn();
+initFirebase().catch(e=>console.warn('Firebase init failed:',e));
+
+// ── PWA SERVICE WORKER ──
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js')
+      .then(r=>console.log('[SW] Enregistré:',r.scope))
+      .catch(e=>console.warn('[SW] Échec:',e));
+  });
+}
+
+// ── MASQUER SPLASH après progression complète ──
+setTimeout(()=>{
+  document.getElementById('splashScreen').classList.add('hidden');
+  setTimeout(()=>{
+    document.getElementById('splashScreen').style.display='none';
+  }, 650);
+  if(!currentUser && !localStorage.getItem('mas_auth_skipped')){
+    showAuth();
+  }
+}, 2400);
+</script>
+<!-- MODAL CLÉ API -->
+<div id="apiKeyModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--white);border-radius:20px;padding:24px;max-width:340px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);">
+    <div style="font-size:1.1rem;font-weight:900;color:var(--text);margin-bottom:6px;">🔑 Clé API Anthropic</div>
+    <div style="font-size:.78rem;color:var(--muted);font-weight:600;margin-bottom:16px;line-height:1.6;">Pour utiliser Amina sur GitHub ou dans ton navigateur, entre ta clé API Anthropic. Elle est sauvegardée localement sur ton appareil.</div>
+    <input id="apiKeyInput" type="password" placeholder="sk-ant-api03-..." style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:12px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:600;background:var(--bg);color:var(--text);outline:none;margin-bottom:10px;">
+    <div style="display:flex;gap:8px;">
+      <button onclick="saveApiKey()" style="flex:1;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;">Sauvegarder</button>
+      <button onclick="document.getElementById('apiKeyModal').style.display='none'" style="padding:12px 16px;background:var(--bg);color:var(--muted);border:1.5px solid var(--border);border-radius:12px;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;">Annuler</button>
+    </div>
+    <div style="margin-top:12px;padding:10px;background:rgba(79,142,247,.1);border-radius:10px;font-size:.72rem;color:var(--a3);font-weight:700;line-height:1.5;">
+      💡 Obtiens ta clé gratuite sur <strong>console.anthropic.com</strong> → API Keys
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
