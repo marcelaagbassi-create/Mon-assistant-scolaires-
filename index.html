@@ -491,6 +491,16 @@ body.dark .about-hero{background:linear-gradient(135deg,#1A1D27,#22263A);}
 .profile-login-cta{background:linear-gradient(135deg,#1C2340,#2D3A6B);border-radius:14px;padding:16px;text-align:center;margin-bottom:18px;}
 .profile-login-cta p{font-size:.82rem;color:rgba(255,255,255,.7);font-weight:600;margin-bottom:10px;}
 .profile-login-cta button{padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;cursor:pointer;}
+
+/* ── SÉLECTEUR DE MODÈLE IA ── */
+.ai-model-bar{display:flex;align-items:center;gap:6px;padding:7px 12px 6px;background:var(--bg);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;flex-shrink:0;}
+.ai-model-bar::-webkit-scrollbar{display:none;}
+.ai-model-chip{display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:99px;border:1.5px solid var(--border);background:var(--white);font-size:.63rem;font-weight:800;cursor:pointer;transition:all .2s;color:var(--muted);white-space:nowrap;flex-shrink:0;}
+.ai-model-chip.active{border-color:transparent;color:#fff;}
+.ai-model-chip svg{width:11px;height:11px;flex-shrink:0;}
+.ai-model-chip .model-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.ai-model-label{font-size:.58rem;font-weight:700;color:var(--muted);flex-shrink:0;text-transform:uppercase;letter-spacing:.3px;}
+.ai-model-active-badge{display:flex;align-items:center;gap:4px;padding:2px 8px;background:rgba(0,200,150,.12);border:1px solid rgba(0,200,150,.3);border-radius:99px;font-size:.6rem;font-weight:800;color:var(--a2);flex-shrink:0;margin-left:auto;}
 </style>
 </head>
 <body>
@@ -885,6 +895,27 @@ body.dark .about-hero{background:linear-gradient(135deg,#1A1D27,#22263A);}
     <button class="ai-mode-btn" id="mode-philo" onclick="setMode('philo')">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Philo
     </button>
+  </div>
+
+  <!-- SÉLECTEUR DE MODÈLE IA -->
+  <div class="ai-model-bar" id="aiModelBar">
+    <span class="ai-model-label">IA :</span>
+    <div class="ai-model-chip active" id="mchip-claude" onclick="selectModel('claude-3.5-sonnet')" style="background:#6B46C1;border-color:#6B46C1;">
+      <div class="model-dot" style="background:#fff;opacity:.8;"></div>Claude
+    </div>
+    <div class="ai-model-chip" id="mchip-mistral" onclick="selectModel('mistral-small')">
+      <div class="model-dot" style="background:#FF6B35;"></div>Mistral
+    </div>
+    <div class="ai-model-chip" id="mchip-deepseek" onclick="selectModel('deepseek-chat-v2')">
+      <div class="model-dot" style="background:#4F8EF7;"></div>DeepSeek
+    </div>
+    <div class="ai-model-chip" id="mchip-gemini" onclick="selectModel('gemini-2.0-flash')">
+      <div class="model-dot" style="background:#00C896;"></div>Gemini
+    </div>
+    <div class="ai-model-active-badge" id="aiModelBadge">
+      <div style="width:5px;height:5px;border-radius:50%;background:var(--a2);animation:blink 2s infinite;"></div>
+      <span id="aiModelBadgeTxt">Claude</span>
+    </div>
   </div>
 
   <div class="aimsgs" id="aiMsgs"></div>
@@ -1519,19 +1550,9 @@ loadChat();
 // ══════════════════════════════════════════
 //  CLÉ API — gestion
 // ══════════════════════════════════════════
-function getApiKey(){ return localStorage.getItem('mas_apikey')||''; }
-function saveApiKey(){
-  const k=document.getElementById('apiKeyInput').value.trim();
-  if(!k.startsWith('sk-ant')){ toast('❌ Clé invalide (doit commencer par sk-ant)'); return; }
-  localStorage.setItem('mas_apikey',k);
-  document.getElementById('apiKeyModal').style.display='none';
-  toast('✅ Clé API sauvegardée !');
-}
-function openApiKeyModal(){
-  const m=document.getElementById('apiKeyModal');
-  m.style.display='flex';
-  document.getElementById('apiKeyInput').value=getApiKey();
-}
+function getApiKey(){ return ''; } // Clé gérée par ALVACOA
+function saveApiKey(){ toast('✅ Amina est connectée via le serveur ALVACOA — aucune clé requise !'); }
+function openApiKeyModal(){ toast('ℹ️ Amina est connectée via le serveur ALVACOA — aucune clé requise !'); }
 function clearChat(){
   if(!confirm('Effacer toute la discussion avec Amina ?')) return;
   aiHistory=[];aiConversation=[];
@@ -1674,84 +1695,101 @@ async function sendAI(){
   }
 }
 
-// ══ URL DU WORKER PROXY (à remplacer après déploiement Cloudflare) ══
-// Déploie cloudflare-worker.js sur workers.cloudflare.com
-// puis remplace cette URL par la tienne :
-const WORKER_URL = 'https://amina-proxy.onrender.com';
+// ══ ALVACOA SERVER — Proxy officiel d'Amina IA ══
+// ══════════════════════════════════════════
+//  ALVACOA MULTI-IA — Claude · Mistral · DeepSeek · Gemini
+// ══════════════════════════════════════════
+const ALVACOA_URL = 'https://alvacoa-api.onrender.com/chat';
+
+// Modèles disponibles avec leurs configs visuelles
+const AI_MODELS = {
+  'claude-3.5-sonnet': { label: 'Claude',   color: '#6B46C1', chip: 'mchip-claude'   },
+  'mistral-small':     { label: 'Mistral',  color: '#FF6B35', chip: 'mchip-mistral'  },
+  'deepseek-chat-v2':  { label: 'DeepSeek', color: '#4F8EF7', chip: 'mchip-deepseek' },
+  'gemini-2.0-flash':  { label: 'Gemini',   color: '#00C896', chip: 'mchip-gemini'   },
+};
+
+// Ordre de fallback automatique si un modèle échoue
+const FALLBACK_ORDER = ['claude-3.5-sonnet','mistral-small','deepseek-chat-v2','gemini-2.0-flash'];
+
+let currentAIModel = 'claude-3.5-sonnet'; // Modèle actif par défaut
+
+function selectModel(modelKey) {
+  if (!AI_MODELS[modelKey]) return;
+  currentAIModel = modelKey;
+  var cfg = AI_MODELS[modelKey];
+
+  Object.values(AI_MODELS).forEach(function(m) {
+    var chip = document.getElementById(m.chip);
+    if (chip) { chip.classList.remove("active"); chip.style.background=""; chip.style.borderColor=""; }
+  });
+  var activeChip = document.getElementById(cfg.chip);
+  if (activeChip) {
+    activeChip.classList.add("active");
+    activeChip.style.background = cfg.color;
+    activeChip.style.borderColor = cfg.color;
+  }
+
+  var badge = document.getElementById("aiModelBadgeTxt");
+  if (badge) badge.textContent = cfg.label;
+
+  addBotMsg("Modele change : je suis maintenant propulsee par **" + cfg.label + "** ! Comment puis-je t\'aider ?", true);
+  toast("Modele : " + cfg.label);
+}
+
+async function callALVACOA(userMessage, modelKey) {
+  var historyCtx = aiConversation.slice(-10)
+    .map(function(m) { return (m.role === "user" ? "Eleve: " : "Amina: ") + m.content; })
+    .join("\n");
+
+  var fullMessage = AMINA_SYSTEM
+    + (historyCtx ? "\n\n[Historique recent]\n" + historyCtx : "")
+    + "\n\n[Message actuel]\n" + userMessage;
+
+  var r = await Promise.race([
+    fetch(ALVACOA_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: fullMessage, model: modelKey })
+    }),
+    new Promise(function(_,rej) { setTimeout(function(){ rej(new Error("timeout")); }, 25000); })
+  ]);
+
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  var data = await r.json();
+
+  if (data && data.content && typeof data.content === "string") return { text: data.content, model: data.model || modelKey };
+  if (data && data.reply)    return { text: data.reply,    model: modelKey };
+  if (data && data.response) return { text: data.response, model: modelKey };
+  if (data && data.text)     return { text: data.text,     model: modelKey };
+  if (typeof data === "string") return { text: data, model: modelKey };
+  throw new Error("Reponse inattendue");
+}
 
 async function callAnthropicAPI(userMessage) {
-  const messages = [
-    ...aiConversation.slice(-20).filter((_,i,arr) => i < arr.length - 1)
+  // Essaie le modèle choisi, puis fallback automatique sur les autres
+  const tryOrder = [
+    currentAIModel,
+    ...FALLBACK_ORDER.filter(m => m !== currentAIModel)
   ];
-  messages.push({role:'user', content: userMessage});
 
-  const payload = {
-    model: 'claude-sonnet-4-20250514',
-    max_tokens: 2000,
-    system: AMINA_SYSTEM,
-    messages
-  };
-  const payloadStr = JSON.stringify(payload);
+  for (let i = 0; i < tryOrder.length; i++) {
+    const modelKey = tryOrder[i];
+    try {
+      if (i > 0) console.log('[ALVACOA] Fallback vers', modelKey);
+      const result = await callALVACOA(userMessage, modelKey);
 
-  // ── 1. Worker Cloudflare — appel simple sans headers CORS problématiques ──
-  try {
-    const r = await Promise.race([
-      fetch(WORKER_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: payloadStr
-      }),
-      new Promise((_,rej) => setTimeout(()=>rej(new Error('timeout')), 15000))
-    ]);
-    if(r.ok) {
-      const d = await r.json();
-      if(d?.content?.[0]?.text) return d.content[0].text;
+      // Si on a basculé sur un fallback, on l'indique discrètement
+      if (i > 0) {
+        const fallbackLabel = AI_MODELS[modelKey]?.label || modelKey;
+        return result.text + "\n\n_(fallback: " + fallbackLabel + ")_";
+      }
+      return result.text;
+    } catch(e) {
+      console.warn('[ALVACOA]', modelKey, 'échoué:', e.message);
+      if (i === tryOrder.length - 1) throw e; // tous les modèles ont échoué
     }
-    console.warn('[API] Worker status:', r.status);
-  } catch(e){ console.warn('[API] Worker failed:', e.message); }
-
-  // ── 2. Appel direct Anthropic (marche dans aperçu Claude) ──
-  try {
-    const r = await Promise.race([
-      fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true',
-          'x-api-key': ANTHROPIC_API_KEY
-        },
-        body: payloadStr
-      }),
-      new Promise((_,rej) => setTimeout(()=>rej(new Error('timeout')), 15000))
-    ]);
-    if(r.ok) {
-      const d = await r.json();
-      if(d?.content?.[0]?.text) return d.content[0].text;
-    }
-  } catch(e){ console.warn('[API] Direct failed:', e.message); }
-
-  // ── 3. corsproxy.io ──
-  try {
-    const r = await Promise.race([
-      fetch('https://corsproxy.io/?url=' + encodeURIComponent('https://api.anthropic.com/v1/messages'), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'anthropic-version': '2023-06-01',
-          'x-api-key': ANTHROPIC_API_KEY
-        },
-        body: payloadStr
-      }),
-      new Promise((_,rej) => setTimeout(()=>rej(new Error('timeout')), 15000))
-    ]);
-    if(r.ok) {
-      const d = await r.json();
-      if(d?.content?.[0]?.text) return d.content[0].text;
-    }
-  } catch(e){ console.warn('[API] corsproxy failed:', e.message); }
-
-  throw new Error('API non disponible');
+  }
 }
 
 // Réponses locales intelligentes (fallback si API non disponible)
@@ -2276,10 +2314,6 @@ renderPdfList();
 // ══════════════════════════════════════════
 //  FIREBASE CONFIG + ANTHROPIC KEY
 // ══════════════════════════════════════════
-// Clé reconstituée dynamiquement
-const _a='sk-ant-api03-';
-const _b=['oGtcmt','VNMabo','r3vSTp','7fW_sk','p53Qsn','z9nKsU','izFh1z','bOaB5L','u3Rzs_','8yuI4m','IROkgl','q-dOT0','qehdp5','TiGCIO','2A-yoc','1HwAA'];
-const ANTHROPIC_API_KEY = _a+_b.join('');
 
 const firebaseConfig = {
   apiKey: "AIzaSyDX2BmcE9pjlh3zOCIFRuMp35FPd0E45tM",
@@ -2521,21 +2555,6 @@ setTimeout(()=>{
   }
 }, 2400);
 </script>
-<!-- MODAL CLÉ API -->
-<div id="apiKeyModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px;">
-  <div style="background:var(--white);border-radius:20px;padding:24px;max-width:340px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);">
-    <div style="font-size:1.1rem;font-weight:900;color:var(--text);margin-bottom:6px;">🔑 Clé API Anthropic</div>
-    <div style="font-size:.78rem;color:var(--muted);font-weight:600;margin-bottom:16px;line-height:1.6;">Pour utiliser Amina sur GitHub ou dans ton navigateur, entre ta clé API Anthropic. Elle est sauvegardée localement sur ton appareil.</div>
-    <input id="apiKeyInput" type="password" placeholder="sk-ant-api03-..." style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:12px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:600;background:var(--bg);color:var(--text);outline:none;margin-bottom:10px;">
-    <div style="display:flex;gap:8px;">
-      <button onclick="saveApiKey()" style="flex:1;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;">Sauvegarder</button>
-      <button onclick="document.getElementById('apiKeyModal').style.display='none'" style="padding:12px 16px;background:var(--bg);color:var(--muted);border:1.5px solid var(--border);border-radius:12px;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;">Annuler</button>
-    </div>
-    <div style="margin-top:12px;padding:10px;background:rgba(79,142,247,.1);border-radius:10px;font-size:.72rem;color:var(--a3);font-weight:700;line-height:1.5;">
-      💡 Obtiens ta clé gratuite sur <strong>console.anthropic.com</strong> → API Keys
-    </div>
-  </div>
-</div>
 
 </body>
 </html>
