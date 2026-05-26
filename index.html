@@ -671,6 +671,100 @@ body.dark .about-hero{background:linear-gradient(135deg,#1A1D27,#22263A);}
 .aitype-wrap span:nth-child(1)::after{animation-delay:0s;}
 .aitype-wrap span:nth-child(2)::after{animation-delay:.25s;}
 .aitype-wrap span:nth-child(3)::after{animation-delay:.5s;}
+
+/* ── IMAGE PLEIN ÉCRAN ── */
+.img-fullscreen-overlay{
+  position:fixed;inset:0;z-index:9999;
+  background:rgba(0,0,0,.95);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:16px;
+  opacity:0;pointer-events:none;
+  transition:opacity .25s;
+}
+.img-fullscreen-overlay.show{opacity:1;pointer-events:all;}
+.img-fs-img{
+  max-width:100%;max-height:70vh;
+  border-radius:12px;
+  object-fit:contain;
+  box-shadow:0 8px 40px rgba(0,0,0,.6);
+}
+.img-fs-actions{
+  display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;justify-content:center;
+}
+.img-fs-btn{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:10px 16px;border-radius:12px;border:none;cursor:pointer;
+  background:rgba(255,255,255,.1);color:#fff;font-size:.68rem;font-weight:800;
+  letter-spacing:.3px;transition:background .2s;min-width:60px;
+}
+.img-fs-btn:active{background:rgba(255,255,255,.2);}
+.img-fs-btn svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2;}
+.img-fs-close{
+  position:absolute;top:16px;right:16px;
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(255,255,255,.12);border:none;
+  color:#fff;font-size:1.2rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.ai-img-gen-wrap img{cursor:pointer;}
+
+/* ── APERÇU CODE NAVIGATEUR INTÉGRÉ ── */
+.code-preview-wrap{
+  margin:8px 0;border-radius:14px;overflow:hidden;
+  border:1px solid var(--border);
+  background:var(--white);
+  box-shadow:0 2px 12px rgba(0,0,0,.08);
+}
+.code-preview-topbar{
+  display:flex;align-items:center;gap:8px;
+  padding:7px 12px;
+  background:linear-gradient(90deg,#1A1D27,#22263A);
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.code-preview-dots{display:flex;gap:5px;}
+.code-preview-dot{width:10px;height:10px;border-radius:50%;}
+.cpd-red{background:#FF5F57;}
+.cpd-yellow{background:#FEBC2E;}
+.cpd-green{background:#28C840;}
+.code-preview-url{
+  flex:1;background:rgba(255,255,255,.08);border-radius:6px;
+  padding:3px 10px;font-size:.62rem;color:rgba(255,255,255,.5);
+  font-family:monospace;letter-spacing:.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.code-preview-btns{display:flex;gap:6px;}
+.code-preview-btn{
+  background:none;border:none;color:rgba(255,255,255,.5);
+  font-size:.7rem;cursor:pointer;padding:2px 6px;border-radius:4px;
+  transition:background .15s;font-weight:700;
+}
+.code-preview-btn:active{background:rgba(255,255,255,.1);}
+.code-preview-iframe{
+  width:100%;border:none;display:block;
+  min-height:200px;max-height:380px;
+  background:#fff;
+}
+.code-block-wrap{position:relative;margin:8px 0;}
+.code-block-wrap pre{
+  background:#1A1D27;color:#E2E8F0;
+  padding:14px;border-radius:10px;
+  font-size:.72rem;overflow-x:auto;
+  font-family:monospace;line-height:1.6;
+  margin:0;
+}
+.code-run-btn{
+  position:absolute;top:8px;right:8px;
+  background:var(--accent);color:#fff;
+  border:none;border-radius:6px;padding:4px 10px;
+  font-size:.62rem;font-weight:800;cursor:pointer;
+  display:flex;align-items:center;gap:4px;
+}
+.code-run-btn svg{width:10px;height:10px;fill:#fff;}
+.code-lang-badge{
+  position:absolute;top:8px;left:12px;
+  font-size:.58rem;font-weight:800;color:rgba(255,255,255,.4);
+  font-family:monospace;letter-spacing:.5px;text-transform:uppercase;
+}
 </style>
 </head>
 <body>
@@ -1701,37 +1795,38 @@ function renderRappels(){
 //  OU on passe par une iframe/worker si nécessaire
 // ══════════════════════════════════════════════════════
 
-const AMINA_SYSTEM = `Tu es Amina, l'assistante IA de l'application "Mon Assistant Scolaires", une app éducative pour les élèves de Côte d'Ivoire (6ème jusqu'à Terminale).
+const AMINA_SYSTEM = `Tu es Amina, l'assistante IA brillante de "Mon Assistant Scolaires", une app pour les élèves ivoiriens (6ème à Terminale).
 
-PERSONNALITÉ D'AMINA :
-Tu es chaleureuse, intelligente, encourageante et proche des élèves ivoiriens. Tu tutoies toujours. Tu es à la fois mathématicienne, littéraire, philosophe, scientifique — polyvalente et brillante. Tu comprends le contexte culturel ivoirien et tu donnes des exemples locaux quand c'est pertinent. Tu encourages toujours, même quand c'est difficile. Tu as de l'humour (subtil) et tu sais quand être sérieuse. Quand quelqu'un dit simplement "salut" ou "comment tu vas", tu réponds naturellement et chaleureusement comme une vraie personne, puis tu proposes ton aide.
+IDENTITÉ :
+Tu es chaleureuse, intelligente, proche des élèves. Tu tutoies toujours. Tu es mathématicienne, littéraire, scientifique, codeuse, philosophe — polyvalente et brillante. Tu comprends la culture ivoirienne et utilises des exemples locaux pertinents.
 
-TON RÔLE PRINCIPAL :
-1. Répondre à TOUTES les questions intelligemment (comme Claude/GPT-4)
-2. Résoudre des exercices et problèmes complexes étape par étape
-3. Aider à rédiger : dissertations, commentaires, résumés, poèmes, textes argumentatifs
-4. Expliquer des cours (maths, physique, SVT, histoire, philo, littérature...)
-5. Corriger les devoirs et donner des retours constructifs
-6. Calculer et montrer toutes les étapes
-7. Répondre aux questions existentielles, philosophiques, de la vie
-8. Pour les images demandées : décrire précisément ce que devrait montrer le visuel
+INTELLIGENCE DE ROUTAGE — TU ANALYSES CHAQUE DEMANDE :
+Avant de répondre, tu identifies mentalement le TYPE de tâche :
+- CODE/PROG → réponse technique propre avec blocs code et explication ligne par ligne
+- MATHS/SCIENCES → chaque étape numérotée, vérification finale, pas de raccourcis
+- RÉDACTION/DISSERT → plan structuré I/II/III avec transitions, vocabulaire soutenu
+- PHILO → thèse/antithèse/synthèse, auteurs clés, exemples concrets
+- IMAGE → description visuelle très précise de ce que devrait montrer l'image
+- CONVERSATION → naturel, chaleureux, bref, puis propose ton aide
 
-MODES DISPONIBLES :
-- Chat : conversation naturelle
-- Exercices : résolution étape par étape avec méthode complète
-- Rédaction : structurer et rédiger des textes complets
-- Calcul : calculs détaillés avec toutes les étapes
-- Philo : analyse philosophique, dissertations, argumentation
+RÈGLES ABSOLUES DE RÉPONSE :
+1. Tu réponds TOUJOURS directement à la question — jamais "je ne peux pas"
+2. Tes réponses sont PRÉCISES : chiffres exacts, formules correctes, dates vérifiées
+3. Pour le CODE : blocs \`\`\`langage ... \`\`\` obligatoires, commentaires dans le code
+4. Pour les MATHS : notation claire, chaque étape sur une ligne, résultat encadré
+5. Pour les RÉDACTIONS : minimum 3 paragraphes structurés
+6. Tu n'inventes JAMAIS un fait — si tu n'es pas sûre, tu le dis clairement
+7. Tu mémorises le contexte de la conversation pour des réponses cohérentes
 
 FORMATAGE :
-- Utilise **texte** pour les points importants
-- Pour les formules mathématiques, utilise des notations claires
-- Organise tes réponses avec des titres quand c'est long
-- Sois concis pour les petites questions, détaillé pour les exercices complexes
-- Réponds TOUJOURS à la question posée — ne jamais ignorer une demande
+- **texte** pour les points importants
+- Titres ## pour structurer les longues réponses
+- Listes - pour énumérer
+- Blocs code pour tout code source
+- Formules mathématiques claires et lisibles
 
-CONTEXTE APP :
-Programme CI de la 6ème à la Terminale. Coefficients officiels pour Première A et D. Pour les autres classes, les élèves saisissent leurs propres coefficients. Matières : Maths, Français, Histoire-Géo, SVT, Physique-Chimie, Philosophie, Anglais, LV2, Arts Plastiques, Musique, EPS, Conduite, Éducation Civique.`;
+PROGRAMME CI :
+6ème → Terminale. Matières : Maths, Français, Hist-Géo, SVT, Physique-Chimie, Philo, Anglais, LV2, EPS, Arts, Musique, Conduite, Éducation Civique. Coefficients officiels Première A et D.`;
 
 let aiConversation = []; // historique complet pour l'API
 
@@ -1824,19 +1919,97 @@ function addBotMsg(text,skipTTS=false){
   const formatted=formatAIText(text);
   d.innerHTML=`<div class="aibub">${formatted}</div><div class="aitime">${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')}</div>`;
   msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
-  if(!skipTTS)speakText(text.replace(/<[^>]*>/g,'').replace(/\*\*(.*?)\*\*/g,'$1').slice(0,200));
+  if(!skipTTS) speakText(cleanForSpeech(text));
 }
 
 function formatAIText(text){
-  return text
+  // 1. Blocs code multi-lignes ```lang...```
+  text = text.replace(/```([a-zA-Z0-9]*)?\n?([\s\S]*?)```/g, function(match, lang, code){
+    var l = (lang || 'code').trim();
+    var id = 'code_' + Math.random().toString(36).slice(2,8);
+    var escaped = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    var canRun = /^(html|javascript|js|css)$/i.test(l);
+    var runBtn = canRun
+      ? '<button class="code-run-btn" onclick="runCodePreview(\''+id+'\',\''+l+'\')"><svg viewBox="0 0 10 10"><polygon points="2,1 9,5 2,9"/></svg>Apercu</button>'
+      : '';
+    return '<div class="code-block-wrap">'
+      + '<span class="code-lang-badge">'+l+'</span>'
+      + runBtn
+      + '<pre id="'+id+'" data-lang="'+l+'"><code>'+escaped.trim()+'</code></pre>'
+      + '</div>';
+  });
+
+  // 2. Code inline `...`
+  text = text.replace(/`([^`]+)`/g,'<code style="background:rgba(255,107,53,.1);padding:1px 5px;border-radius:4px;font-family:monospace;font-size:.85em;">$1</code>');
+
+  // 3. Markdown standard
+  text = text
     .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
     .replace(/\*(.*?)\*/g,'<em>$1</em>')
-    .replace(/`(.*?)`/g,'<code>$1</code>')
+    .replace(/^### (.*)/gm,'<strong style="font-size:.9rem;color:var(--accent);display:block;margin-top:8px;">$1</strong>')
+    .replace(/^## (.*)/gm,'<strong style="font-size:.95rem;display:block;margin-top:10px;">$1</strong>')
+    .replace(/^# (.*)/gm,'<strong style="font-size:1rem;font-family:\'Playfair Display\',serif;display:block;margin-top:12px;">$1</strong>')
+    .replace(/^- (.*)/gm,'<div style="display:flex;gap:6px;margin:2px 0;"><span style="color:var(--accent);flex-shrink:0;">•</span><span>$1</span></div>')
+    .replace(/^(\d+)\. (.*)/gm,'<div style="display:flex;gap:6px;margin:2px 0;"><span style="color:var(--accent);font-weight:800;flex-shrink:0;">$1.</span><span>$2</span></div>')
     .replace(/\n\n/g,'<br><br>')
-    .replace(/\n/g,'<br>')
-    .replace(/^### (.*)/gm,'<strong style="font-size:.92rem;color:var(--accent)">$1</strong><br>')
-    .replace(/^## (.*)/gm,'<strong style="font-size:.95rem">$1</strong><br>')
-    .replace(/^# (.*)/gm,'<strong style="font-size:1rem;font-family:\'Playfair Display\',serif">$1</strong><br>');
+    .replace(/\n/g,'<br>');
+
+  return text;
+}
+
+// Lancer l apercu HTML/JS dans un iframe
+function runCodePreview(codeId, lang) {
+  var preEl = document.getElementById(codeId);
+  if (!preEl) return;
+  var code = preEl.innerText || preEl.textContent;
+  var wrap = preEl.closest('.code-block-wrap');
+  if (!wrap) return;
+
+  // Supprimer l apercu precedent si existe
+  var old = wrap.querySelector('.code-preview-wrap');
+  if (old) { old.remove(); return; } // toggle
+
+  var iframeId = 'iframe_' + codeId;
+  var html = '';
+  if (/^(js|javascript)$/i.test(lang)) {
+    html = '<html><body style="font-family:sans-serif;padding:12px;background:#fff;"><script>' + code + '<\/script></body></html>';
+  } else if (/^css$/i.test(lang)) {
+    html = '<html><head><style>' + code + '</style></head><body style="padding:12px;"><p>Apercu CSS</p><div class="demo">Element demo</div></body></html>';
+  } else {
+    html = code; // HTML direct
+  }
+
+  var previewWrap = document.createElement('div');
+  previewWrap.className = 'code-preview-wrap';
+  var uniqueUrl = lang.toLowerCase() + '://apercu';
+  previewWrap.innerHTML =
+    '<div class="code-preview-topbar">'
+    + '<div class="code-preview-dots">'
+    +   '<div class="code-preview-dot cpd-red"></div>'
+    +   '<div class="code-preview-dot cpd-yellow"></div>'
+    +   '<div class="code-preview-dot cpd-green"></div>'
+    + '</div>'
+    + '<div class="code-preview-url">apercu.' + lang.toLowerCase() + '</div>'
+    + '<div class="code-preview-btns">'
+    +   '<button class="code-preview-btn" onclick="this.closest(\'.code-preview-wrap\').remove()">✕</button>'
+    + '</div>'
+    + '</div>'
+    + '<iframe class="code-preview-iframe" id="' + iframeId + '" sandbox="allow-scripts allow-same-origin"></iframe>';
+
+  wrap.appendChild(previewWrap);
+
+  var iframe = document.getElementById(iframeId);
+  if (iframe) {
+    var doc = iframe.contentDocument || iframe.contentWindow.document;
+    doc.open(); doc.write(html); doc.close();
+    // Auto-resize
+    setTimeout(function(){
+      try {
+        var h = doc.body.scrollHeight;
+        iframe.style.height = Math.min(Math.max(h + 20, 120), 380) + 'px';
+      } catch(e){}
+    }, 300);
+  }
 }
 
 function addUserMsg(text,extra=''){
@@ -1953,13 +2126,26 @@ function selectModel(modelKey) {
 }
 
 async function callALVACOA(userMessage, modelKey) {
-  var historyCtx = aiConversation.slice(-10)
-    .map(function(m) { return (m.role === "user" ? "Eleve: " : "Amina: ") + m.content; })
+  var historyCtx = aiConversation.slice(-8)
+    .map(function(m){ return (m.role === "user" ? "Eleve: " : "Amina: ") + m.content.slice(0,300); })
     .join("\n");
 
+  // System prompt specialise par modele
+  var taskHints = {
+    "claude-3.5-sonnet": "SPECIALITE CODE: fournis du code propre avec blocs ```langage, commentaires sur chaque partie importante, et explication pas-a-pas. Teste mentalement ton code avant de le donner.",
+    "deepseek-chat-v2":  "SPECIALITE MATHS/SCIENCES: numérote chaque etape (Etape 1, Etape 2...), ecris les formules clairement, verifie ton resultat, encadre la reponse finale.",
+    "mistral-small":     "SPECIALITE REDACTION/PHILO: structure obligatoire I/II/III avec sous-parties, transitions explicites, vocabulaire soutenu, citations si pertinent.",
+    "gemini-2.0-flash":  "SPECIALITE CULTURE/VISUEL: sois descriptif, precise, donne des exemples concrets et visuels. Pour les images, decris precisement chaque element."
+  };
+  var hint = taskHints[modelKey] || "";
+  var memCtx = (typeof buildMemoryContext === "function") ? buildMemoryContext(userMessage) : "";
+
   var fullMessage = AMINA_SYSTEM
-    + (historyCtx ? "\n\n[Historique recent]\n" + historyCtx : "")
-    + "\n\n[Message actuel]\n" + userMessage;
+    + (hint ? "\n\n" + hint : "")
+    + memCtx
+    + (historyCtx ? "\n\n[CONVERSATION EN COURS]\n" + historyCtx : "")
+    + "\n\n[QUESTION]\n" + userMessage
+    + "\n\n[REGLES DE REPONSE]: Reponds directement et precisement. Pas de phrases de remplissage. Code = blocs code. Calcul = etapes numerotees. Redaction = structure claire. Max 600 mots sauf si plus demande.";
 
   var r = await Promise.race([
     fetch(ALVACOA_URL, {
@@ -1981,30 +2167,114 @@ async function callALVACOA(userMessage, modelKey) {
   throw new Error("Reponse inattendue");
 }
 
-async function callAnthropicAPI(userMessage) {
-  // Essaie le modèle choisi, puis fallback automatique sur les autres
-  const tryOrder = [
-    currentAIModel,
-    ...FALLBACK_ORDER.filter(m => m !== currentAIModel)
+// ══════════════════════════════════════════
+//  ROUTAGE INTELLIGENT — bon modele selon la tache
+// ══════════════════════════════════════════
+function detectBestModel(msg) {
+  var m = msg.toLowerCase();
+
+  // Score chaque modele selon la pertinence de la demande
+  var scores = {
+    'claude-3.5-sonnet': 0,
+    'deepseek-chat-v2': 0,
+    'mistral-small': 0,
+    'gemini-2.0-flash': 0
+  };
+
+  // === CLAUDE — Code, logique, raisonnement, API ===
+  var claudeSignals = [
+    /\b(code|coder|programmer|script|fonction|function|class|classe|objet|variable|boucle|loop)\b/,
+    /\b(javascript|python|html|css|java|php|react|nodejs|sql|bash|c\+\+|kotlin|swift)\b/,
+    /\b(bug|debug|erreur|error|exception|fix|corriger|optimiser|refactorer|api|endpoint)\b/,
+    /\b(algorithme|recursion|complexite|structure de donnees|arbre|graphe|tri|sort)\b/,
+    /\b(site web|application|app|front.?end|back.?end|base de donnees|serveur)\b/
   ];
+  claudeSignals.forEach(function(r){ if(r.test(m)) scores['claude-3.5-sonnet'] += 3; });
 
-  for (let i = 0; i < tryOrder.length; i++) {
-    const modelKey = tryOrder[i];
+  // === DEEPSEEK — Maths, sciences exactes, exercices ===
+  var deepseekSignals = [
+    /\b(calcul|calculer|resoudre|equation|inequation|systeme|matrice|determinant)\b/,
+    /\b(integral|integrale|derivee|limite|suite|serie|convergence|divergence)\b/,
+    /\b(probabilite|statistique|esperance|variance|ecart.?type|loi normale)\b/,
+    /\b(physique|mecanique|electricite|optique|thermodynamique|cinematique|energie)\b/,
+    /\b(chimie|reaction|molecule|atome|equation bilan|oxydation|reduction)\b/,
+    /\b(exercice|probleme|demo|demontrer|prouver|theoreme|corollaire|lemme)\b/
+  ];
+  deepseekSignals.forEach(function(r){ if(r.test(m)) scores['deepseek-chat-v2'] += 3; });
+
+  // === MISTRAL — Rédaction, lettres, langues, philo, histoire ===
+  var mistralSignals = [
+    /\b(dissertation|intro|introduction|conclusion|plan|argument|these|antithese|synthese)\b/,
+    /\b(rediger|redaction|ecrire|composer|texte|paragraphe|commentaire|resume|synthese)\b/,
+    /\b(philo|philosophi|concept|notion|auteur|citation|morale|ethique|metaphysique)\b/,
+    /\b(histoire|geographie|evenement|siecle|guerre|revolution|colonisation|independance)\b/,
+    /\b(litterature|roman|poeme|poesie|auteur|personnage|analyse littéraire|extrait)\b/,
+    /\b(lettre|email|courrier|formule|politesse|formel|informel|correspondance)\b/
+  ];
+  mistralSignals.forEach(function(r){ if(r.test(m)) scores['mistral-small'] += 3; });
+
+  // === GEMINI — Images, culture generale, actualites, description ===
+  var geminiSignals = [
+    /\b(image|photo|illustration|dessin|schema|visuel|genere|dessine|cree une image)\b/,
+    /\b(actualite|news|recente|derniere|2024|2025|aujourd|maintenant)\b/,
+    /\b(culture|general|savoir|connaissance|expliquer simplement|c est quoi|qu est.?ce)\b/,
+    /\b(pays|capitale|continent|population|superficie|monument|tourisme)\b/
+  ];
+  geminiSignals.forEach(function(r){ if(r.test(m)) scores['gemini-2.0-flash'] += 3; });
+
+  // Trouver le modele avec le score le plus eleve
+  var best = currentAIModel;
+  var bestScore = 0;
+  Object.keys(scores).forEach(function(model) {
+    if (scores[model] > bestScore) {
+      bestScore = scores[model];
+      best = model;
+    }
+  });
+
+  // Si aucun signal clair (score 0), rester sur le modele actuel
+  return bestScore > 0 ? best : currentAIModel;
+}
+
+async function callAnthropicAPI(userMessage) {
+  var autoModel = detectBestModel(userMessage);
+  var switched = (autoModel !== currentAIModel);
+  var tryOrder = [autoModel].concat(
+    FALLBACK_ORDER.filter(function(m){ return m !== autoModel; })
+  );
+
+  for (var i = 0; i < tryOrder.length; i++) {
+    var modelKey = tryOrder[i];
     try {
-      if (i > 0) console.log('[ALVACOA] Fallback vers', modelKey);
-      const result = await callALVACOA(userMessage, modelKey);
-
-      // Si on a basculé sur un fallback, on l'indique discrètement
-      if (i > 0) {
-        const fallbackLabel = AI_MODELS[modelKey]?.label || modelKey;
-        return result.text + "\n\n_(fallback: " + fallbackLabel + ")_";
+      var result = await callALVACOA(userMessage, modelKey);
+      var text = result.text;
+      // Sauvegarder en mémoire longue durée
+      if (typeof saveToMemory === "function") saveToMemory(userMessage, text, modelKey);
+      if (switched && i === 0) {
+        var lbl = AI_MODELS[autoModel] ? AI_MODELS[autoModel].label : autoModel;
+        text = text + "<br><span style='font-size:.58rem;color:var(--muted);opacity:.6;'>via " + lbl + " (auto)</span>";
+        selectModelSilent(autoModel);
       }
-      return result.text;
+      return text;
     } catch(e) {
-      console.warn('[ALVACOA]', modelKey, 'échoué:', e.message);
-      if (i === tryOrder.length - 1) throw e; // tous les modèles ont échoué
+      console.warn('[ALVACOA]', modelKey, e.message);
+      if (i === tryOrder.length - 1) throw e;
     }
   }
+}
+
+function selectModelSilent(modelKey) {
+  if (!AI_MODELS[modelKey]) return;
+  currentAIModel = modelKey;
+  var cfg = AI_MODELS[modelKey];
+  Object.values(AI_MODELS).forEach(function(m) {
+    var c = document.getElementById(m.chip);
+    if (c) { c.classList.remove("active"); c.style.background=""; c.style.borderColor=""; }
+  });
+  var ac = document.getElementById(cfg.chip);
+  if (ac) { ac.classList.add("active"); ac.style.background=cfg.color; ac.style.borderColor=cfg.color; }
+  var badge = document.getElementById("aiModelBadgeTxt");
+  if (badge) badge.textContent = cfg.label;
 }
 
 // ══════════════════════════════════════════
@@ -2034,6 +2304,78 @@ async function handleImageRequest(msg) {
   var imgHtml = "<div class=\"ai-img-gen-wrap\" id=\"" + imgWrapId + "\"><img src=\"" + imgUrl + "\" alt=\"image\" style=\"width:100%;display:block;border-radius:12px;\"></div>";
 
   addBotMsg("Image : " + subject + "<br><br>" + imgHtml, true);
+
+  // Ajouter click => plein ecran apres insertion dans le DOM
+  setTimeout(function(){
+    var imgs = document.querySelectorAll('.ai-img-gen-wrap img');
+    imgs.forEach(function(img){
+      if (!img.dataset.fsReady) {
+        img.dataset.fsReady = "1";
+        img.addEventListener('click', function(){ openImgFs(this.src); });
+      }
+    });
+  }, 800);
+}
+
+var _currentFsUrl = '';
+var _currentFsSubject = '';
+
+function openImgFs(url) {
+  _currentFsUrl = url;
+  var ov = document.getElementById('imgFsOverlay');
+  var im = document.getElementById('imgFsImg');
+  if (!ov || !im) return;
+  im.src = url;
+  ov.classList.add('show');
+}
+function closeImgFsBtn() {
+  document.getElementById('imgFsOverlay').classList.remove('show');
+}
+function closeImgFs(e) {
+  if (e.target === document.getElementById('imgFsOverlay')) closeImgFsBtn();
+}
+function imgFsDownload() {
+  var a = document.createElement('a');
+  a.href = _currentFsUrl;
+  a.download = 'amina-image.jpg';
+  a.target = '_blank';
+  a.click();
+  toast('Telechargement lance !');
+}
+function imgFsShare() {
+  if (navigator.share) {
+    navigator.share({ title: 'Image Amina', url: _currentFsUrl })
+      .catch(function(){});
+  } else {
+    navigator.clipboard.writeText(_currentFsUrl).then(function(){
+      toast('Lien copie !');
+    });
+  }
+}
+function imgFsCopy() {
+  navigator.clipboard.writeText(_currentFsUrl).then(function(){
+    toast('Lien image copie !');
+  }).catch(function(){
+    toast('Copie non disponible sur ce navigateur');
+  });
+}
+function imgFsRetry() {
+  closeImgFsBtn();
+  var im = document.getElementById('imgFsImg');
+  if (im) {
+    // Changer le seed pour regenerer
+    var newUrl = _currentFsUrl.replace(/seed=\d+/, 'seed=' + Math.floor(Math.random()*99999));
+    _currentFsUrl = newUrl;
+    im.src = newUrl;
+    // Mettre a jour aussi dans le chat
+    document.querySelectorAll('.ai-img-gen-wrap img').forEach(function(img){
+      if (img.src === _currentFsUrl || img.dataset.origUrl === _currentFsUrl) {
+        img.src = newUrl;
+      }
+    });
+    openImgFs(newUrl);
+    toast('Regeneration en cours...');
+  }
 }
 
 // ══════════════════════════════════════════
@@ -2204,6 +2546,83 @@ function checkForUpdate() {
         if (sub) sub.textContent = "Version actuelle : " + APP_VERSION;
       }, 3000);
     });
+}
+
+
+// ══════════════════════════════════════════
+//  MÉMOIRE LONGUE DURÉE D'AMINA
+//  Sauvegarde les discussions par sujet + recall hors-ligne
+// ══════════════════════════════════════════
+var aminaMemory = JSON.parse(localStorage.getItem('amina_memory') || '[]');
+// Structure: [{timestamp, subject, model, summary, keywords:[]}]
+
+function extractKeywords(text) {
+  var stopwords = ['le','la','les','un','une','des','du','de','et','en','que','qui','je','tu','il','elle','nous','vous','ils','est','sont','avec','pour','dans','sur','par','ce','se','si','ne','pas','mais','ou','donc','car','plus','moi','toi','lui'];
+  var words = text.toLowerCase()
+    .replace(/[^a-zA-Zàâéèêëïîôùûüç\s]/g, ' ')
+    .split(/\s+/)
+    .filter(function(w){ return w.length > 3 && stopwords.indexOf(w) < 0; });
+  // Retourner les mots les plus fréquents (top 8)
+  var freq = {};
+  words.forEach(function(w){ freq[w] = (freq[w]||0)+1; });
+  return Object.keys(freq).sort(function(a,b){ return freq[b]-freq[a]; }).slice(0,8);
+}
+
+function saveToMemory(userMsg, botResponse, modelUsed) {
+  var entry = {
+    ts: Date.now(),
+    model: modelUsed,
+    userMsg: userMsg.slice(0, 200),
+    summary: botResponse.replace(/<[^>]*>/g,'').slice(0, 400),
+    keywords: extractKeywords(userMsg + ' ' + botResponse)
+  };
+  aminaMemory.unshift(entry);
+  // Garder les 150 dernières entrées
+  if (aminaMemory.length > 150) aminaMemory = aminaMemory.slice(0, 150);
+  try { localStorage.setItem('amina_memory', JSON.stringify(aminaMemory)); } catch(e){}
+}
+
+function recallFromMemory(query) {
+  if (!aminaMemory.length) return null;
+  var qKeywords = extractKeywords(query);
+  if (!qKeywords.length) return null;
+
+  // Scorer chaque entrée
+  var scored = aminaMemory.map(function(entry) {
+    var score = 0;
+    qKeywords.forEach(function(kw) {
+      if (entry.keywords && entry.keywords.indexOf(kw) >= 0) score += 2;
+      if (entry.summary && entry.summary.toLowerCase().indexOf(kw) >= 0) score += 1;
+      if (entry.userMsg && entry.userMsg.toLowerCase().indexOf(kw) >= 0) score += 1;
+    });
+    return { entry: entry, score: score };
+  });
+
+  scored.sort(function(a,b){ return b.score - a.score; });
+  var best = scored[0];
+  if (best.score >= 3) return best.entry;
+  return null;
+}
+
+function buildMemoryContext(userMsg) {
+  // Inclure les 5 dernières + les pertinentes
+  var recent = aminaMemory.slice(0, 5);
+  var relevant = [];
+  var recalled = recallFromMemory(userMsg);
+  if (recalled && recent.indexOf(recalled) < 0) relevant.push(recalled);
+
+  var ctx = '';
+  if (recent.length || relevant.length) {
+    ctx += '\n\n[MEMOIRE DES DISCUSSIONS PRECEDENTES]\n';
+    recent.forEach(function(e, i) {
+      ctx += 'Discussion ' + (i+1) + ' (' + AI_MODELS[e.model]?.label || e.model + '): ' + e.summary.slice(0,150) + '\n';
+    });
+    if (relevant.length) {
+      ctx += 'Discussion pertinente retrouvee: ' + relevant[0].summary.slice(0,200) + '\n';
+    }
+    ctx += '[FIN MEMOIRE]\n';
+  }
+  return ctx;
 }
 
 // Réponses locales intelligentes (fallback si API non disponible)
@@ -2953,5 +3372,29 @@ setTimeout(()=>{
 }, 2400);
 </script>
 
+
+<!-- IMAGE PLEIN ÉCRAN -->
+<div class="img-fullscreen-overlay" id="imgFsOverlay" onclick="closeImgFs(event)">
+  <button class="img-fs-close" onclick="closeImgFsBtn()">✕</button>
+  <img class="img-fs-img" id="imgFsImg" src="" alt="image">
+  <div class="img-fs-actions">
+    <button class="img-fs-btn" onclick="imgFsDownload()">
+      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Telecharger
+    </button>
+    <button class="img-fs-btn" onclick="imgFsShare()">
+      <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      Partager
+    </button>
+    <button class="img-fs-btn" onclick="imgFsCopy()">
+      <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+      Copier
+    </button>
+    <button class="img-fs-btn" onclick="imgFsRetry()">
+      <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+      Reessayer
+    </button>
+  </div>
+</div>
 </body>
 </html>
