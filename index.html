@@ -231,10 +231,31 @@ textarea{resize:vertical;min-height:72px;}
 .ai-attach svg{width:14px;height:14px;stroke:var(--accent);fill:none;flex-shrink:0;}
 .ai-img-preview{max-width:100%;border-radius:8px;margin-top:6px;display:block;}
 
-.aitype-wrap{display:flex;gap:4px;align-items:center;padding:12px 14px;}
-.aitype-wrap span{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:typing 1.2s infinite;}
-.aitype-wrap span:nth-child(2){animation-delay:.2s;}
-.aitype-wrap span:nth-child(3){animation-delay:.4s;}
+.aitype-wrap{display:flex;gap:6px;align-items:center;padding:14px 16px;position:relative;}
+.aitype-wrap span{
+  width:8px;height:8px;border-radius:50%;
+  background:linear-gradient(135deg,#FF6B35,#FF9A5C);
+  animation:mirrorDot 1.4s ease-in-out infinite;
+  position:relative;
+  box-shadow:0 2px 6px rgba(255,107,53,.4);
+}
+.aitype-wrap span::after{
+  content:'';
+  position:absolute;top:110%;left:0;
+  width:8px;height:8px;border-radius:50%;
+  background:linear-gradient(135deg,rgba(255,107,53,.35),rgba(255,154,92,.15));
+  transform:scaleY(-0.5);
+  filter:blur(1px);
+  animation:mirrorDotRef 1.4s ease-in-out infinite;
+}
+@keyframes mirrorDot{
+  0%,100%{transform:translateY(0);opacity:.4;background:linear-gradient(135deg,#FF6B35,#FF9A5C);}
+  50%{transform:translateY(-5px);opacity:1;background:linear-gradient(135deg,#FF9A5C,#FFB380);}
+}
+@keyframes mirrorDotRef{
+  0%,100%{transform:scaleY(-0.5) translateY(0);opacity:.2;}
+  50%{transform:scaleY(-0.6) translateY(-3px);opacity:.4;}
+}
 @keyframes typing{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
 
 .aisugs{display:flex;gap:5px;overflow-x:auto;padding:7px 11px 0;scrollbar-width:none;flex-shrink:0;}
@@ -637,6 +658,19 @@ body.dark .about-hero{background:linear-gradient(135deg,#1A1D27,#22263A);}
 .ai-model-chip .model-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 .ai-model-label{font-size:.58rem;font-weight:700;color:var(--muted);flex-shrink:0;text-transform:uppercase;letter-spacing:.3px;}
 .ai-model-active-badge{display:flex;align-items:center;gap:4px;padding:2px 8px;background:rgba(0,200,150,.12);border:1px solid rgba(0,200,150,.3);border-radius:99px;font-size:.6rem;font-weight:800;color:var(--a2);flex-shrink:0;margin-left:auto;}
+
+/* ── BOUTON ENVOI — état STOP (carré) ── */
+.aibar-send-fab.stop-mode{border-radius:8px !important;background:#e53e3e !important;box-shadow:0 2px 12px rgba(229,62,62,.4) !important;}
+.aibar-send-fab.stop-mode svg{display:none;}
+.aibar-send-fab .stop-icon{display:none;width:14px;height:14px;background:#fff;border-radius:2px;}
+.aibar-send-fab.stop-mode .stop-icon{display:block;}
+
+.aitype-wrap span:nth-child(1){animation-delay:0s;}
+.aitype-wrap span:nth-child(2){animation-delay:.25s;}
+.aitype-wrap span:nth-child(3){animation-delay:.5s;}
+.aitype-wrap span:nth-child(1)::after{animation-delay:0s;}
+.aitype-wrap span:nth-child(2)::after{animation-delay:.25s;}
+.aitype-wrap span:nth-child(3)::after{animation-delay:.5s;}
 </style>
 </head>
 <body>
@@ -950,8 +984,16 @@ body.dark .about-hero{background:linear-gradient(135deg,#1A1D27,#22263A);}
 
   <div class="about-hero">
     <div class="about-logo">Mon Assistant Scolaires</div>
-    <div class="about-ver">Version 1.0.0</div>
-    <div class="about-tagline">L'assistant des élèves — apprendre, réviser, réussir.</div>
+    <div class="about-ver" id="appVersionDisplay">Version 1.1.0</div>
+    <div id="updateBanner" style="margin:10px 0 0;padding:10px 14px;border-radius:10px;background:linear-gradient(90deg,rgba(0,200,150,.1),rgba(79,142,247,.08));border:1px solid rgba(0,200,150,.25);display:flex;align-items:center;gap:10px;cursor:pointer;" onclick="checkForUpdate()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00C896" stroke-width="2.5" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+    <div style="flex:1;">
+      <div style="font-size:.72rem;font-weight:800;color:var(--text);" id="updateStatusTxt">Vérifier les mises à jour</div>
+      <div style="font-size:.62rem;color:var(--muted);margin-top:1px;" id="updateSubTxt">Version actuelle : 1.1.0</div>
+    </div>
+    <svg id="updateArrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+  </div>
+  <div class="about-tagline">L'assistant des élèves — apprendre, réviser, réussir.</div>
   </div>
 
   <div class="about-dev">
@@ -1149,8 +1191,9 @@ body.dark .about-hero{background:linear-gradient(135deg,#1A1D27,#22263A);}
             <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
           </button>
           <!-- Envoi (FAB orange) -->
-          <button class="aibar-send-fab" onclick="sendAI()">
+          <button class="aibar-send-fab" id="aiSendBtn" onclick="handleSendBtn()">
             <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            <div class="stop-icon"></div>
           </button>
         </div>
       </div>
@@ -1810,16 +1853,16 @@ function addUserMsg(text,extra=''){
 }
 
 function showTyping(){
-  // Activer l'overlay miroir
+  setSendBtn('stop');
   var overlay = document.getElementById('aiThinkingOverlay');
   if(overlay) overlay.classList.add('show');
-  // Bulle de typing classique
   var msgs=document.getElementById('aiMsgs');
   var d=document.createElement('div');d.className='aimsg bot';d.id='aiTyping';
   d.innerHTML='<div class="aibub"><div class="aitype-wrap"><span></span><span></span><span></span></div></div>';
   msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
 }
 function hideTyping(){
+  setSendBtn('send');
   var d=document.getElementById('aiTyping');if(d)d.remove();
   var overlay=document.getElementById('aiThinkingOverlay');
   if(overlay) overlay.classList.remove('show');
@@ -1997,40 +2040,170 @@ async function handleImageRequest(msg) {
 //  PAROLE AMINA — Text-to-Speech ameliore
 // ══════════════════════════════════════════
 var currentUtterance = null;
-function speakText(text) {
-  if(!window.speechSynthesis) return;
-  if(currentUtterance) { window.speechSynthesis.cancel(); }
-  var clean = text.replace(/<[^>]*>/g,'').replace(/\*\*(.*?)\*\*/g,'$1').slice(0,400);
-  currentUtterance = new SpeechSynthesisUtterance(clean);
-  currentUtterance.lang = 'fr-FR';
-  currentUtterance.rate = 0.95;
-  currentUtterance.pitch = 1.05;
+// ── Gestion bouton Send/Stop ──
+var _isSending = false;
+function setSendBtn(mode) {
+  var btn = document.getElementById('aiSendBtn');
+  if (!btn) return;
+  if (mode === 'stop') {
+    btn.classList.add('stop-mode');
+    _isSending = true;
+  } else {
+    btn.classList.remove('stop-mode');
+    _isSending = false;
+  }
+}
+function handleSendBtn() {
+  if (_isSending) {
+    // Interrompre Amina
+    stopSpeak();
+    hideTyping();
+    setSendBtn('send');
+  } else {
+    sendAI();
+  }
+}
 
-  // Chercher une voix francaise féminine
+// Nettoyage approfondi du texte avant lecture
+function cleanForSpeech(raw) {
+  return raw
+    // Supprimer les balises HTML
+    .replace(/<[^>]*>/g, ' ')
+    // Supprimer les emojis (tous les ranges unicode emoji)
+    .replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27FF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FEFF}\u{1F900}-\u{1F9FF}]/gu, '')
+    .replace(/[\uD800-\uDFFF]/g, '')
+    // Supprimer markdown
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/\*(.*?)\*/g, '$1')
+    .replace(/#{1,6}\s/g, '')
+    .replace(/---/g, '. ')
+    .replace(/`([^`]*)`/g, '$1')
+    // Supprimer ponctuation spéciale parlée bizarrement
+    .replace(/[_~^|\\]/g, ' ')
+    // Nettoyer espaces multiples
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 500);
+}
+
+// Voix preferee d Amina (sauvegardée)
+var aminaVoiceURI = localStorage.getItem('amina_voice_uri') || '';
+
+function getBestVoice() {
   var voices = window.speechSynthesis.getVoices();
-  var frVoice = voices.find(function(v){ return v.lang.startsWith('fr') && v.name.toLowerCase().includes('female'); })
+  if (!voices.length) return null;
+  // 1. Voix sauvegardée par l utilisateur
+  if (aminaVoiceURI) {
+    var saved = voices.find(function(v){ return v.voiceURI === aminaVoiceURI; });
+    if (saved) return saved;
+  }
+  // 2. Voix française feminine douce
+  var preferred = [
+    'Amelie', 'Thomas', 'Marie', 'Julie', 'Lea', 'Google français',
+    'Microsoft Julie', 'Microsoft Hortense', 'Audrey', 'Virginie'
+  ];
+  for (var i = 0; i < preferred.length; i++) {
+    var v = voices.find(function(v){ return v.name.indexOf(preferred[i]) >= 0; });
+    if (v) return v;
+  }
+  // 3. Toute voix fr-FR
+  return voices.find(function(v){ return v.lang === 'fr-FR'; })
     || voices.find(function(v){ return v.lang.startsWith('fr'); })
-    || voices.find(function(v){ return v.lang === 'fr-FR'; });
-  if(frVoice) currentUtterance.voice = frVoice;
+    || null;
+}
 
-  currentUtterance.onstart = function(){
-    var sp = document.getElementById('aiSpeak');
-    if(sp) sp.classList.add('show');
-    var st = document.getElementById('aiSpeakTxt');
-    if(st) st.textContent = 'Amina parle...';
-  };
-  currentUtterance.onend = function(){
-    var sp = document.getElementById('aiSpeak');
-    if(sp) sp.classList.remove('show');
-    currentUtterance = null;
-  };
-  window.speechSynthesis.speak(currentUtterance);
+function speakText(text) {
+  if (!window.speechSynthesis) return;
+  stopSpeak();
+  var clean = cleanForSpeech(text);
+  if (!clean) return;
+
+  function doSpeak() {
+    currentUtterance = new SpeechSynthesisUtterance(clean);
+    currentUtterance.lang = 'fr-FR';
+    currentUtterance.rate = 0.88;   // lent, posé
+    currentUtterance.pitch = 1.1;   // légèrement féminin
+    currentUtterance.volume = 1.0;
+    var voice = getBestVoice();
+    if (voice) currentUtterance.voice = voice;
+
+    currentUtterance.onstart = function(){
+      setSendBtn('stop');
+      var sp = document.getElementById('aiSpeak');
+      if (sp) sp.classList.add('show');
+    };
+    currentUtterance.onend = currentUtterance.onerror = function(){
+      setSendBtn('send');
+      var sp = document.getElementById('aiSpeak');
+      if (sp) sp.classList.remove('show');
+      currentUtterance = null;
+    };
+    window.speechSynthesis.speak(currentUtterance);
+  }
+
+  // Les voix sont parfois chargées de façon asynchrone
+  var voices = window.speechSynthesis.getVoices();
+  if (voices.length) { doSpeak(); }
+  else { window.speechSynthesis.onvoiceschanged = function(){ doSpeak(); }; }
 }
 function stopSpeak(){
   if(window.speechSynthesis) window.speechSynthesis.cancel();
   var sp = document.getElementById('aiSpeak');
   if(sp) sp.classList.remove('show');
   currentUtterance = null;
+}
+
+
+// ══════════════════════════════════════════
+//  SYSTEME DE MISE A JOUR
+// ══════════════════════════════════════════
+var APP_VERSION = "1.1.0";
+var UPDATE_CHECK_URL = "https://alvacoa-api.onrender.com/version"; // endpoint optionnel
+
+function checkForUpdate() {
+  var btn = document.getElementById('updateBanner');
+  var txt = document.getElementById('updateStatusTxt');
+  var sub = document.getElementById('updateSubTxt');
+  var arrow = document.getElementById('updateArrow');
+  if (!txt) return;
+
+  txt.textContent = "Verification en cours...";
+  if (btn) btn.style.opacity = "0.7";
+
+  // Essai de fetch version distante
+  fetch(UPDATE_CHECK_URL + "?v=" + Date.now())
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var remote = data.version || data.v || null;
+      if (remote && remote !== APP_VERSION) {
+        txt.textContent = "Mise a jour disponible : v" + remote;
+        if (sub) sub.textContent = "Tap pour telecharger";
+        if (btn) {
+          btn.style.background = "linear-gradient(90deg,rgba(255,107,53,.15),rgba(255,154,92,.08))";
+          btn.style.borderColor = "rgba(255,107,53,.4)";
+          btn.onclick = function(){ window.open("https://github.com/marcelaagbassi-create/alvacoa-api","_blank"); };
+        }
+        if (arrow) arrow.setAttribute('stroke','#FF6B35');
+      } else {
+        txt.textContent = "Application a jour !";
+        if (sub) sub.textContent = "Version " + APP_VERSION + " — derniere version";
+        if (btn) btn.style.opacity = "1";
+        setTimeout(function(){
+          txt.textContent = "Verifier les mises a jour";
+          if (sub) sub.textContent = "Version actuelle : " + APP_VERSION;
+          if (btn) btn.style.opacity = "1";
+        }, 3000);
+      }
+    })
+    .catch(function(){
+      txt.textContent = "Application a jour !";
+      if (sub) sub.textContent = "Impossible de verifier — version " + APP_VERSION;
+      if (btn) btn.style.opacity = "1";
+      setTimeout(function(){
+        txt.textContent = "Verifier les mises a jour";
+        if (sub) sub.textContent = "Version actuelle : " + APP_VERSION;
+      }, 3000);
+    });
 }
 
 // Réponses locales intelligentes (fallback si API non disponible)
