@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-title" content="Assi Scolaires">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="description" content="L'assistant IA des élèves ivoiriens — réviser, apprendre, réussir">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#F7F8FC;--white:#fff;--border:#E8ECF4;
@@ -415,6 +415,142 @@ body.dark .about-hero{background:linear-gradient(135deg,#1A1D27,#22263A);}
 @keyframes shimmer{0%{background-position:0%;}100%{background-position:200%;}}
 .splash-progress-pct{font-family:'Nunito',sans-serif;font-size:.65rem;font-weight:800;color:rgba(255,255,255,.4);letter-spacing:.5px;}
 
+/* ══ LOADER DAVIESLAY EN BAS DU SPLASH ══ */
+.splash-davieslay{
+  position:absolute;bottom:28px;left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;justify-content:center;
+  width:220px;height:52px;
+  background:transparent;
+  border:none;
+  overflow:visible;
+}
+.dav-logo-text{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:26px;letter-spacing:3px;
+  color:#808080;
+  -webkit-text-stroke:1px #000;
+  paint-order:stroke fill;
+  position:relative;z-index:1;
+  user-select:none;
+}
+.dav-studio{
+  font-family:monospace;font-size:7px;letter-spacing:3px;
+  color:rgba(255,255,255,.28);text-transform:lowercase;
+  position:absolute;bottom:5px;right:10px;
+}
+.dav-shine{
+  position:absolute;inset:0;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:26px;letter-spacing:3px;
+  color:transparent;
+  background:linear-gradient(105deg,transparent 20%,rgba(255,255,255,0) 35%,rgba(255,255,255,.85) 48%,rgba(255,255,255,1) 50%,rgba(255,255,255,.85) 52%,rgba(255,255,255,0) 65%,transparent 80%);
+  background-size:300% 100%;
+  background-clip:text;-webkit-background-clip:text;
+  animation:davSweep 3s ease-in-out infinite;
+  animation-delay:.5s;
+  z-index:2;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;
+}
+@keyframes davSweep{
+  0%{background-position:200% center;opacity:0;}
+  5%{opacity:1;}
+  50%{background-position:-50% center;opacity:1;}
+  70%{opacity:0;}
+  100%{background-position:-50% center;opacity:0;}
+}
+
+/* ══ EFFET MIROIR DÉFILANT (réflexion pendant qu'Amina réfléchit) ══ */
+.ai-thinking-overlay{
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  padding:18px 14px 14px;gap:10px;flex-shrink:0;
+  background:linear-gradient(180deg,var(--white) 0%,rgba(255,255,255,.0) 100%);
+}
+.ai-thinking-overlay.show{display:flex;}
+.thinking-words-wrap{position:relative;width:100%;overflow:hidden;height:28px;}
+.thinking-words{
+  display:flex;gap:10px;white-space:nowrap;
+  animation:thinkScroll 8s linear infinite;
+}
+.thinking-word{
+  font-family:'Playfair Display',serif;
+  font-size:.9rem;font-weight:900;
+  color:transparent;
+  background:linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,107,53,.15) 15%,
+    rgba(255,107,53,.7) 40%,
+    #FF6B35 50%,
+    rgba(255,107,53,.7) 60%,
+    rgba(255,107,53,.15) 85%,
+    transparent 100%
+  );
+  background-clip:text;-webkit-background-clip:text;
+  background-size:200% 100%;
+  animation:mirrorWord 2.2s ease-in-out infinite;
+  position:relative;
+}
+.thinking-word:nth-child(2){animation-delay:.3s;}
+.thinking-word:nth-child(3){animation-delay:.6s;}
+.thinking-word:nth-child(4){animation-delay:.9s;}
+.thinking-word:nth-child(5){animation-delay:1.2s;}
+.thinking-word:nth-child(6){animation-delay:1.5s;}
+.thinking-word:nth-child(7){animation-delay:1.8s;}
+.thinking-word:nth-child(8){animation-delay:2.1s;}
+/* Reflet miroir sous chaque mot */
+.thinking-word::after{
+  content:attr(data-word);
+  position:absolute;top:100%;left:0;
+  background:linear-gradient(180deg,rgba(255,107,53,.35) 0%,transparent 70%);
+  background-clip:text;-webkit-background-clip:text;
+  color:transparent;
+  transform:scaleY(-1);
+  opacity:.45;
+  font-family:'Playfair Display',serif;
+  font-size:.9rem;font-weight:900;
+  pointer-events:none;
+}
+@keyframes mirrorWord{
+  0%{background-position:200% center;}
+  100%{background-position:-100% center;}
+}
+@keyframes thinkScroll{
+  0%{transform:translateX(0);}
+  100%{transform:translateX(-50%);}
+}
+.thinking-label{
+  font-size:.6rem;font-weight:800;color:var(--muted);
+  letter-spacing:1.5px;text-transform:uppercase;
+  display:flex;align-items:center;gap:5px;
+}
+.thinking-label .tl-dot{
+  width:5px;height:5px;border-radius:50%;
+  background:var(--accent);
+  animation:blink 1.2s ease-in-out infinite;
+}
+.thinking-label .tl-dot:nth-child(2){animation-delay:.2s;}
+.thinking-label .tl-dot:nth-child(3){animation-delay:.4s;}
+
+/* ══ GÉNÉRATION D'IMAGES ══ */
+.ai-img-gen-wrap{margin:8px 0;border-radius:12px;overflow:hidden;border:1px solid var(--border);background:var(--bg);}
+.ai-img-gen-wrap img{width:100%;display:block;border-radius:12px;}
+.ai-img-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:24px;color:var(--muted);}
+.ai-img-placeholder svg{width:32px;height:32px;stroke:var(--border);fill:none;stroke-width:1.5;}
+.ai-img-placeholder span{font-size:.72rem;font-weight:700;}
+
+/* ══ PAROLE AMINA AMÉLIORÉE ══ */
+.aispeak{display:none;align-items:center;gap:8px;padding:8px 13px;background:linear-gradient(90deg,rgba(0,200,150,.08),rgba(79,142,247,.05));border-top:1px solid rgba(0,200,150,.2);flex-shrink:0;}
+.aispeak.show{display:flex;}
+.speak-waveform{display:flex;align-items:center;gap:2px;height:22px;}
+.speak-bar{width:2.5px;border-radius:99px;background:var(--a2);animation:speakPulse 0.8s ease-in-out infinite;}
+.speak-bar:nth-child(1){height:5px;animation-delay:0s;}
+.speak-bar:nth-child(2){height:12px;animation-delay:.1s;}
+.speak-bar:nth-child(3){height:18px;animation-delay:.2s;}
+.speak-bar:nth-child(4){height:22px;animation-delay:.3s;}
+.speak-bar:nth-child(5){height:14px;animation-delay:.4s;}
+.speak-bar:nth-child(6){height:20px;animation-delay:.5s;}
+.speak-bar:nth-child(7){height:8px;animation-delay:.6s;}
+@keyframes speakPulse{0%,100%{transform:scaleY(.3);opacity:.4;}50%{transform:scaleY(1);opacity:1;}}
+
 /* ══ TOAST NOTIFICATIONS ══ */
 .notif-toast{
   position:fixed;top:66px;right:10px;left:10px;z-index:8500;
@@ -531,6 +667,15 @@ body.dark .about-hero{background:linear-gradient(135deg,#1A1D27,#22263A);}
       <div class="splash-progress-fill" id="splashFill"></div>
     </div>
     <div class="splash-progress-pct" id="splashPct">0%</div>
+  </div>
+
+  <!-- DAVIESLAY STUDIO — bas du loader -->
+  <div class="splash-davieslay">
+    <div style="position:relative;line-height:1;">
+      <div class="dav-logo-text">DAVIESLAY</div>
+      <div class="dav-shine">DAVIESLAY</div>
+      <span class="dav-studio">studio</span>
+    </div>
   </div>
 </div>
 
@@ -918,6 +1063,17 @@ body.dark .about-hero{background:linear-gradient(135deg,#1A1D27,#22263A);}
     </div>
   </div>
 
+  <!-- OVERLAY RÉFLEXION MIROIR -->
+  <div class="ai-thinking-overlay" id="aiThinkingOverlay">
+    <div class="thinking-words-wrap">
+      <div class="thinking-words" id="thinkingWords"><span class="thinking-word" data-word="Analyse...">Analyse...</span><span class="thinking-word" data-word="Reflexion...">Reflexion...</span><span class="thinking-word" data-word="Calcul...">Calcul...</span><span class="thinking-word" data-word="Logique...">Logique...</span><span class="thinking-word" data-word="Memoire...">Memoire...</span><span class="thinking-word" data-word="Synthese...">Synthese...</span><span class="thinking-word" data-word="Raisonnement...">Raisonnement...</span><span class="thinking-word" data-word="Precision...">Precision...</span><span class="thinking-word" data-word="Analyse...">Analyse...</span><span class="thinking-word" data-word="Reflexion...">Reflexion...</span><span class="thinking-word" data-word="Calcul...">Calcul...</span><span class="thinking-word" data-word="Logique...">Logique...</span><span class="thinking-word" data-word="Memoire...">Memoire...</span><span class="thinking-word" data-word="Synthese...">Synthese...</span><span class="thinking-word" data-word="Raisonnement...">Raisonnement...</span><span class="thinking-word" data-word="Precision...">Precision...</span></div>
+    </div>
+    <div class="thinking-label">
+      <div class="tl-dot"></div><div class="tl-dot"></div><div class="tl-dot"></div>
+      Amina reflechit
+    </div>
+  </div>
+
   <div class="aimsgs" id="aiMsgs"></div>
 
   <div class="aisugs" id="aiSugs">
@@ -931,7 +1087,11 @@ body.dark .about-hero{background:linear-gradient(135deg,#1A1D27,#22263A);}
   </div>
 
   <div class="aispeak" id="aiSpeak">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00C896" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 010 14.14"/><path d="M15.54 8.46a5 5 0 010 7.07"/></svg>
+    <div class="speak-waveform">
+      <div class="speak-bar"></div><div class="speak-bar"></div><div class="speak-bar"></div>
+      <div class="speak-bar"></div><div class="speak-bar"></div><div class="speak-bar"></div>
+      <div class="speak-bar"></div>
+    </div>
     <span class="aispeak-txt" id="aiSpeakTxt">Amina parle...</span>
     <button class="aispeak-stop" onclick="stopSpeak()">Stop</button>
   </div>
@@ -1650,19 +1810,31 @@ function addUserMsg(text,extra=''){
 }
 
 function showTyping(){
-  const msgs=document.getElementById('aiMsgs');
-  const d=document.createElement('div');d.className='aimsg bot';d.id='aiTyping';
+  // Activer l'overlay miroir
+  var overlay = document.getElementById('aiThinkingOverlay');
+  if(overlay) overlay.classList.add('show');
+  // Bulle de typing classique
+  var msgs=document.getElementById('aiMsgs');
+  var d=document.createElement('div');d.className='aimsg bot';d.id='aiTyping';
   d.innerHTML='<div class="aibub"><div class="aitype-wrap"><span></span><span></span><span></span></div></div>';
   msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
 }
-function hideTyping(){const d=document.getElementById('aiTyping');if(d)d.remove();}
+function hideTyping(){
+  var d=document.getElementById('aiTyping');if(d)d.remove();
+  var overlay=document.getElementById('aiThinkingOverlay');
+  if(overlay) overlay.classList.remove('show');
+}
 
 async function sendAI(){
-  const inp=document.getElementById('aiInput');
-  let msg=inp.value.trim();
+  var inp=document.getElementById('aiInput');
+  var msg=inp.value.trim();
   if(!msg&&pendingAttachments.length===0)return;
   if(!msg)msg='Voici le fichier joint :';
   inp.value='';inp.style.height='auto';
+
+  // Detection demande d'image
+  var isImgReq = /genere|dessine|cree.*(image)|montre.*(image|photo|illustration)|image de|photo de|illustr/i.test(msg);
+  if(isImgReq){ handleImageRequest(msg); return; }
 
   const attachInfo=pendingAttachments.map(a=>a.name).join(', ');
   addUserMsg(msg,attachInfo);
@@ -1792,6 +1964,75 @@ async function callAnthropicAPI(userMessage) {
   }
 }
 
+// ══════════════════════════════════════════
+//  GENERATION D'IMAGES via Pollinations.AI (gratuit, sans clé)
+// ══════════════════════════════════════════
+async function handleImageRequest(msg) {
+  addUserMsg(msg);
+  showTyping();
+
+  // Extraire le sujet de la demande
+  var subject = msg
+    .replace(/genere\s*(moi|une)?\s*(image|illustration|photo|schema)?\s*(de|sur)?/gi,'')
+    .replace(/dessine\s*(moi)?\s*(un|une)?/gi,'')
+    .replace(/cree\s*(une)?\s*(image|illustration)?\s*(de|sur)?/gi,'')
+    .replace(/montre\s*(moi)?\s*(une)?\s*(image|photo)?\s*(de|sur)?/gi,'')
+    .trim();
+
+  if(!subject) subject = msg;
+
+  // Prompt enrichi pour contexte scolaire ivoirien
+  var prompt = encodeURIComponent(subject + ", educational illustration, clean, colorful, detailed");
+  var imgUrl = "https://image.pollinations.ai/prompt/" + prompt + "?width=512&height=512&nologo=true&seed=" + Math.floor(Math.random()*9999);
+
+  hideTyping();
+
+  var imgWrapId = "imgw" + Date.now();
+  var imgHtml = "<div class=\"ai-img-gen-wrap\" id=\"" + imgWrapId + "\"><img src=\"" + imgUrl + "\" alt=\"image\" style=\"width:100%;display:block;border-radius:12px;\"></div>";
+
+  addBotMsg("Image : " + subject + "<br><br>" + imgHtml, true);
+}
+
+// ══════════════════════════════════════════
+//  PAROLE AMINA — Text-to-Speech ameliore
+// ══════════════════════════════════════════
+var currentUtterance = null;
+function speakText(text) {
+  if(!window.speechSynthesis) return;
+  if(currentUtterance) { window.speechSynthesis.cancel(); }
+  var clean = text.replace(/<[^>]*>/g,'').replace(/\*\*(.*?)\*\*/g,'$1').slice(0,400);
+  currentUtterance = new SpeechSynthesisUtterance(clean);
+  currentUtterance.lang = 'fr-FR';
+  currentUtterance.rate = 0.95;
+  currentUtterance.pitch = 1.05;
+
+  // Chercher une voix francaise féminine
+  var voices = window.speechSynthesis.getVoices();
+  var frVoice = voices.find(function(v){ return v.lang.startsWith('fr') && v.name.toLowerCase().includes('female'); })
+    || voices.find(function(v){ return v.lang.startsWith('fr'); })
+    || voices.find(function(v){ return v.lang === 'fr-FR'; });
+  if(frVoice) currentUtterance.voice = frVoice;
+
+  currentUtterance.onstart = function(){
+    var sp = document.getElementById('aiSpeak');
+    if(sp) sp.classList.add('show');
+    var st = document.getElementById('aiSpeakTxt');
+    if(st) st.textContent = 'Amina parle...';
+  };
+  currentUtterance.onend = function(){
+    var sp = document.getElementById('aiSpeak');
+    if(sp) sp.classList.remove('show');
+    currentUtterance = null;
+  };
+  window.speechSynthesis.speak(currentUtterance);
+}
+function stopSpeak(){
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
+  var sp = document.getElementById('aiSpeak');
+  if(sp) sp.classList.remove('show');
+  currentUtterance = null;
+}
+
 // Réponses locales intelligentes (fallback si API non disponible)
 function generateSmartLocalReply(msg, mode) {
   const m = msg.toLowerCase().trim();
@@ -1907,24 +2148,7 @@ function quickAsk(q){
 //  SYNTHÈSE VOCALE
 // ══════════════════════════════════════════
 let voiceEnabled = false;
-function speakText(text){
-  if(!window.speechSynthesis||!voiceEnabled||text.length<5)return;
-  speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(text.slice(0,250));
-  u.lang='fr-FR';u.rate=0.95;u.pitch=1.05;
-  document.getElementById('aiSpeak').classList.add('show');
-  document.getElementById('aiSpeakTxt').textContent='Amina parle...';
-  u.onend=()=>document.getElementById('aiSpeak').classList.remove('show');
-  u.onerror=()=>document.getElementById('aiSpeak').classList.remove('show');
-  speechSynthesis.speak(u);
-}
-function stopSpeak(){if(window.speechSynthesis)speechSynthesis.cancel();document.getElementById('aiSpeak').classList.remove('show');}
 
-// Double-tap sur header pour activer/désactiver voix
-document.querySelector('.aiphdr').addEventListener('dblclick',()=>{
-  voiceEnabled=!voiceEnabled;
-  toast(voiceEnabled?'Voix activée 🔊':'Voix désactivée 🔇');
-});
 
 // ══════════════════════════════════════════
 //  RECONNAISSANCE VOCALE
