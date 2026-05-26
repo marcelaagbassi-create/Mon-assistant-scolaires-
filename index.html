@@ -1961,55 +1961,85 @@ function formatAIText(text){
 function runCodePreview(codeId, lang) {
   var preEl = document.getElementById(codeId);
   if (!preEl) return;
-  var code = preEl.innerText || preEl.textContent;
+
+  // Recuperer le code brut (decode les entites HTML)
+  var tmp = document.createElement('div');
+  tmp.innerHTML = preEl.innerHTML;
+  var code = tmp.textContent || tmp.innerText || '';
+
   var wrap = preEl.closest('.code-block-wrap');
   if (!wrap) return;
 
-  // Supprimer l apercu precedent si existe
-  var old = wrap.querySelector('.code-preview-wrap');
-  if (old) { old.remove(); return; } // toggle
+  // Toggle: fermer si deja ouvert
+  var existing = wrap.querySelector('.code-preview-wrap');
+  if (existing) { existing.remove(); return; }
 
-  var iframeId = 'iframe_' + codeId;
+  // Construire le HTML a afficher dans l iframe
   var html = '';
   if (/^(js|javascript)$/i.test(lang)) {
-    html = '<html><body style="font-family:sans-serif;padding:12px;background:#fff;"><script>' + code + '<\/script></body></html>';
+    html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:sans-serif;padding:16px;margin:0;background:#fff;}</style></head><body></body><script>' + code + '<\/script></html>';
   } else if (/^css$/i.test(lang)) {
-    html = '<html><head><style>' + code + '</style></head><body style="padding:12px;"><p>Apercu CSS</p><div class="demo">Element demo</div></body></html>';
+    html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><style>' + code + '</style></head><body style="padding:16px;background:#fff;"><h3>Apercu CSS</h3><div class="demo"><p>Texte demo</p><button>Bouton</button><input placeholder="Input demo"></div></body></html>';
   } else {
-    html = code; // HTML direct
+    // HTML complet ou fragment
+    if (code.indexOf('<!DOCTYPE') >= 0 || code.indexOf('<html') >= 0) {
+      html = code;
+    } else {
+      html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:sans-serif;padding:16px;margin:0;background:#fff;}</style></head><body>' + code + '</body></html>';
+    }
   }
 
+  // Creer la structure du navigateur
   var previewWrap = document.createElement('div');
   previewWrap.className = 'code-preview-wrap';
-  var uniqueUrl = lang.toLowerCase() + '://apercu';
-  previewWrap.innerHTML =
-    '<div class="code-preview-topbar">'
-    + '<div class="code-preview-dots">'
-    +   '<div class="code-preview-dot cpd-red"></div>'
-    +   '<div class="code-preview-dot cpd-yellow"></div>'
-    +   '<div class="code-preview-dot cpd-green"></div>'
+
+  // Topbar
+  var topbar = document.createElement('div');
+  topbar.className = 'code-preview-topbar';
+  topbar.innerHTML =
+    '<div class="code-preview-dots">'
+    + '<div class="code-preview-dot cpd-red"></div>'
+    + '<div class="code-preview-dot cpd-yellow"></div>'
+    + '<div class="code-preview-dot cpd-green"></div>'
     + '</div>'
     + '<div class="code-preview-url">apercu.' + lang.toLowerCase() + '</div>'
-    + '<div class="code-preview-btns">'
-    +   '<button class="code-preview-btn" onclick="this.closest(\'.code-preview-wrap\').remove()">✕</button>'
-    + '</div>'
-    + '</div>'
-    + '<iframe class="code-preview-iframe" id="' + iframeId + '" sandbox="allow-scripts allow-same-origin"></iframe>';
+    + '<div class="code-preview-btns"></div>';
 
+  var closeBtn = document.createElement('button');
+  closeBtn.className = 'code-preview-btn';
+  closeBtn.textContent = 'x';
+  closeBtn.onclick = function(){ previewWrap.remove(); };
+  topbar.querySelector('.code-preview-btns').appendChild(closeBtn);
+
+  // Iframe
+  var iframe = document.createElement('iframe');
+  iframe.className = 'code-preview-iframe';
+  iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms');
+  iframe.style.height = '280px';
+
+  previewWrap.appendChild(topbar);
+  previewWrap.appendChild(iframe);
   wrap.appendChild(previewWrap);
 
-  var iframe = document.getElementById(iframeId);
-  if (iframe) {
+  // Ecrire le contenu dans l iframe APRES insertion dans le DOM
+  try {
     var doc = iframe.contentDocument || iframe.contentWindow.document;
-    doc.open(); doc.write(html); doc.close();
-    // Auto-resize
+    doc.open();
+    doc.write(html);
+    doc.close();
+    // Auto-ajuster la hauteur
     setTimeout(function(){
       try {
-        var h = doc.body.scrollHeight;
-        iframe.style.height = Math.min(Math.max(h + 20, 120), 380) + 'px';
-      } catch(e){}
-    }, 300);
+        var h = doc.body ? doc.body.scrollHeight : 280;
+        iframe.style.height = Math.min(Math.max(h + 24, 150), 420) + 'px';
+      } catch(e){ iframe.style.height = '280px'; }
+    }, 400);
+  } catch(e) {
+    iframe.srcdoc = html;
   }
+
+  // Scroll vers l apercu
+  setTimeout(function(){ previewWrap.scrollIntoView({behavior:'smooth', block:'nearest'}); }, 100);
 }
 
 function addUserMsg(text,extra=''){
@@ -2335,12 +2365,26 @@ function closeImgFs(e) {
   if (e.target === document.getElementById('imgFsOverlay')) closeImgFsBtn();
 }
 function imgFsDownload() {
-  var a = document.createElement('a');
-  a.href = _currentFsUrl;
-  a.download = 'amina-image.jpg';
-  a.target = '_blank';
-  a.click();
-  toast('Telechargement lance !');
+  toast('Telechargement en cours...');
+  // Fetch en blob pour contourner les restrictions CORS sur le telechargement direct
+  fetch(_currentFsUrl)
+    .then(function(r){ return r.blob(); })
+    .then(function(blob){
+      var blobUrl = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = 'amina-image-' + Date.now() + '.jpg';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(blobUrl); }, 2000);
+      toast('Image telechargee !');
+    })
+    .catch(function(){
+      // Fallback: ouvrir dans un nouvel onglet
+      window.open(_currentFsUrl, '_blank');
+      toast('Ouvert dans le navigateur - faites clic long pour sauvegarder');
+    });
 }
 function imgFsShare() {
   if (navigator.share) {
