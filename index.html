@@ -765,6 +765,162 @@ body.dark .about-hero{background:linear-gradient(135deg,#1A1D27,#22263A);}
   font-size:.58rem;font-weight:800;color:rgba(255,255,255,.4);
   font-family:monospace;letter-spacing:.5px;text-transform:uppercase;
 }
+
+/* ── PAGE ACCUEIL AMINA STYLE GEMINI ── */
+.amina-welcome{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  flex:1;padding:32px 24px 16px;text-align:center;
+  background:var(--bg);
+  transition:opacity .3s;
+}
+.amina-welcome.hidden{display:none;}
+.amina-star-wrap{
+  position:relative;width:64px;height:64px;margin-bottom:20px;
+}
+.amina-star{
+  width:64px;height:64px;
+  background:conic-gradient(from 0deg,#4285F4,#EA4335,#FBBC05,#34A853,#4285F4);
+  clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+  animation:starSpin 8s linear infinite;
+  filter:drop-shadow(0 0 18px rgba(66,133,244,.5));
+}
+@keyframes starSpin{0%{filter:drop-shadow(0 0 18px rgba(66,133,244,.5)) hue-rotate(0deg);}100%{filter:drop-shadow(0 0 18px rgba(66,133,244,.5)) hue-rotate(360deg);}}
+.amina-star-glow{
+  position:absolute;inset:-12px;border-radius:50%;
+  background:radial-gradient(circle,rgba(66,133,244,.15) 0%,transparent 70%);
+  animation:glowPulse 2.5s ease-in-out infinite;
+}
+@keyframes glowPulse{0%,100%{transform:scale(1);opacity:.5;}50%{transform:scale(1.2);opacity:1;}}
+.amina-greeting{
+  font-size:1.45rem;font-weight:300;color:var(--text);
+  margin-bottom:8px;letter-spacing:-.3px;
+  font-family:'Nunito',sans-serif;
+}
+.amina-greeting strong{font-weight:800;}
+.amina-greeting-sub{
+  font-size:.8rem;color:var(--muted);font-weight:500;
+  margin-bottom:28px;
+}
+.amina-suggestions{
+  display:flex;flex-direction:column;gap:8px;width:100%;max-width:340px;
+}
+.amina-sug{
+  padding:12px 16px;border-radius:12px;
+  border:1px solid var(--border);background:var(--white);
+  text-align:left;font-size:.78rem;font-weight:600;color:var(--text);
+  cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:10px;
+}
+.amina-sug:active{background:var(--bg);transform:scale(.98);}
+.amina-sug-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem;}
+.amina-sug-txt{flex:1;}
+.amina-sug-txt small{display:block;font-size:.65rem;color:var(--muted);font-weight:500;margin-top:1px;}
+
+/* ── MENU + STYLE GEMINI ── */
+.plus-menu-overlay{
+  position:fixed;inset:0;z-index:800;
+  background:rgba(0,0,0,.4);backdrop-filter:blur(4px);
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.plus-menu-overlay.show{opacity:1;pointer-events:all;}
+.plus-menu-sheet{
+  position:absolute;bottom:0;left:0;right:0;
+  background:var(--bg);border-radius:20px 20px 0 0;
+  padding:8px 0 32px;
+  transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+}
+.plus-menu-overlay.show .plus-menu-sheet{transform:translateY(0);}
+.plus-menu-handle{width:40px;height:4px;border-radius:99px;background:var(--border);margin:8px auto 16px;}
+.plus-menu-top-row{
+  display:flex;gap:10px;padding:0 16px 16px;
+  overflow-x:auto;scrollbar-width:none;
+}
+.plus-menu-top-row::-webkit-scrollbar{display:none;}
+.plus-top-btn{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  min-width:64px;cursor:pointer;
+}
+.plus-top-icon{
+  width:56px;height:56px;border-radius:16px;
+  background:rgba(255,255,255,.07);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;transition:background .18s;
+}
+.plus-top-icon svg{width:26px;height:26px;stroke:var(--text);fill:none;stroke-width:1.8;}
+.plus-top-btn:active .plus-top-icon{background:rgba(255,107,53,.15);}
+.plus-top-label{font-size:.65rem;font-weight:700;color:var(--muted);white-space:nowrap;}
+.plus-menu-list{padding:0 8px;}
+.plus-list-item{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 12px;border-radius:12px;cursor:pointer;
+  transition:background .15s;
+}
+.plus-list-item:active{background:var(--bg);}
+.plus-list-icon{
+  width:40px;height:40px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.plus-list-icon svg{width:20px;height:20px;fill:none;stroke-width:2;stroke-linecap:round;}
+.plus-list-txt{flex:1;}
+.plus-list-title{font-size:.85rem;font-weight:800;color:var(--text);}
+.plus-list-sub{font-size:.68rem;color:var(--muted);margin-top:1px;}
+.plus-list-badge{font-size:.58rem;font-weight:800;padding:2px 7px;border-radius:99px;background:rgba(0,200,150,.15);color:var(--a2);border:1px solid rgba(0,200,150,.25);}
+
+/* ── MODE LIVE AMINA ── */
+.live-overlay{
+  position:fixed;inset:0;z-index:900;
+  background:#000;
+  display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+  padding:60px 24px 48px;
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.live-overlay.show{opacity:1;pointer-events:all;}
+.live-header{text-align:center;}
+.live-title{font-size:.75rem;font-weight:800;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;}
+.live-star-big{
+  width:88px;height:88px;margin:32px auto;
+  background:conic-gradient(from 0deg,#4285F4,#EA4335,#FBBC05,#34A853,#4285F4);
+  clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+  animation:starSpin 6s linear infinite;
+  filter:drop-shadow(0 0 30px rgba(66,133,244,.7));
+}
+.live-star-big.listening{animation:starSpin 2s linear infinite;filter:drop-shadow(0 0 40px rgba(234,67,53,.9));}
+.live-status{font-size:1.2rem;font-weight:300;color:#fff;text-align:center;min-height:36px;margin-bottom:8px;}
+.live-status-sub{font-size:.75rem;color:rgba(255,255,255,.35);text-align:center;}
+.live-transcript{
+  flex:1;width:100%;max-width:340px;padding:16px;
+  overflow-y:auto;display:flex;flex-direction:column;gap:8px;
+}
+.live-msg{font-size:.85rem;color:rgba(255,255,255,.7);text-align:center;line-height:1.5;}
+.live-msg.user{color:#fff;font-weight:600;}
+.live-actions{
+  display:flex;align-items:center;justify-content:center;gap:24px;
+  width:100%;
+}
+.live-btn{
+  width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .15s;
+}
+.live-btn:active{transform:scale(.9);}
+.live-btn svg{width:24px;height:24px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;}
+.live-btn-share{background:rgba(255,255,255,.12);}
+.live-btn-mic{
+  width:72px;height:72px;
+  background:linear-gradient(135deg,#4285F4,#34A853);
+  box-shadow:0 4px 20px rgba(66,133,244,.5);
+}
+.live-btn-mic.active{
+  background:linear-gradient(135deg,#EA4335,#FBBC05);
+  box-shadow:0 4px 24px rgba(234,67,53,.6);
+  animation:micPulse 1s ease-in-out infinite;
+}
+@keyframes micPulse{0%,100%{box-shadow:0 4px 24px rgba(234,67,53,.4);}50%{box-shadow:0 4px 40px rgba(234,67,53,.9);}}
+.live-btn-close{background:rgba(255,255,255,.12);}
+
+/* ── AMINA WELCOME VISIBILITY ── */
+.amina-welcome { display: flex; }
+.amina-welcome.aw-hidden { display: none !important; }
+#aiMsgs.msgs-hidden { display: none !important; }
 </style>
 </head>
 <body>
@@ -1199,6 +1355,34 @@ body.dark .about-hero{background:linear-gradient(135deg,#1A1D27,#22263A);}
     </div>
   </div>
 
+  <!-- PAGE ACCUEIL AMINA (style Gemini) -->
+  <div class="amina-welcome" id="aminaWelcome">
+    <div class="amina-star-wrap">
+      <div class="amina-star-glow"></div>
+      <div class="amina-star"></div>
+    </div>
+    <div class="amina-greeting">Salut <strong id="aminaGreetName">toi</strong>, on fait quoi ?</div>
+    <div class="amina-greeting-sub">Je suis Amina, ton assistante scolaire IA</div>
+    <div class="amina-suggestions">
+      <div class="amina-sug" onclick="startSuggestion('Aide-moi a resoudre un exercice de maths')">
+        <div class="amina-sug-icon" style="background:rgba(79,142,247,.12);">🧮</div>
+        <div class="amina-sug-txt">Exercice de maths<small>Resoudre, expliquer etape par etape</small></div>
+      </div>
+      <div class="amina-sug" onclick="startSuggestion('Aide-moi a rediger une dissertation')">
+        <div class="amina-sug-icon" style="background:rgba(255,107,53,.12);">✍️</div>
+        <div class="amina-sug-txt">Rediger une dissertation<small>Plan, intro, developpement, conclusion</small></div>
+      </div>
+      <div class="amina-sug" onclick="startSuggestion('Explique-moi un concept de physique chimie')">
+        <div class="amina-sug-icon" style="background:rgba(0,200,150,.12);">⚗️</div>
+        <div class="amina-sug-txt">Physique-Chimie<small>Explications claires avec exemples</small></div>
+      </div>
+      <div class="amina-sug" onclick="startSuggestion('Ecris un code HTML CSS JS pour moi')">
+        <div class="amina-sug-icon" style="background:rgba(107,70,193,.12);">💻</div>
+        <div class="amina-sug-txt">Coder une application<small>HTML, CSS, JavaScript avec apercu</small></div>
+      </div>
+    </div>
+  </div>
+
   <!-- OVERLAY RÉFLEXION MIROIR -->
   <div class="ai-thinking-overlay" id="aiThinkingOverlay">
     <div class="thinking-words-wrap">
@@ -1234,15 +1418,94 @@ body.dark .about-hero{background:linear-gradient(135deg,#1A1D27,#22263A);}
 
   <div class="aibar" style="position:relative">
     <!-- Menu attachement -->
-    <div class="attach-menu" id="attachMenu">
-      <div class="attach-opt" onclick="triggerAttach('image/*,video/*')">
-        <svg viewBox="0 0 24 24" stroke="#4F8EF7"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Photo / Image
-      </div>
-      <div class="attach-opt" onclick="triggerCamera()">
-        <svg viewBox="0 0 24 24" stroke="#00C896"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Prendre une photo
-      </div>
-      <div class="attach-opt" onclick="triggerAttach('.pdf')">
-        <svg viewBox="0 0 24 24" stroke="#F43F5E"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Fichier PDF
+    <div class="plus-menu-overlay" id="plusMenuOverlay" onclick="closePlusMenu(event)">
+      <div class="plus-menu-sheet">
+        <div class="plus-menu-handle"></div>
+
+        <!-- Rangée du haut : icônes rapides -->
+        <div class="plus-menu-top-row">
+          <div class="plus-top-btn" onclick="plusAction('photo');closePlusMenu()">
+            <div class="plus-top-icon">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+            <span class="plus-top-label">Photos</span>
+          </div>
+          <div class="plus-top-btn" onclick="plusAction('camera');closePlusMenu()">
+            <div class="plus-top-icon">
+              <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </div>
+            <span class="plus-top-label">Appareil</span>
+          </div>
+          <div class="plus-top-btn" onclick="plusAction('file');closePlusMenu()">
+            <div class="plus-top-icon">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <span class="plus-top-label">Fichiers</span>
+          </div>
+          <div class="plus-top-btn" onclick="plusAction('drive');closePlusMenu()">
+            <div class="plus-top-icon">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 2 19 22 19"/></svg>
+            </div>
+            <span class="plus-top-label">Drive</span>
+          </div>
+          <div class="plus-top-btn" onclick="plusAction('notebook');closePlusMenu()">
+            <div class="plus-top-icon">
+              <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+            </div>
+            <span class="plus-top-label">Notes</span>
+          </div>
+        </div>
+
+        <!-- Liste des fonctionnalités avancées -->
+        <div class="plus-menu-list">
+          <div class="plus-list-item" onclick="plusAction('image-gen');closePlusMenu()">
+            <div class="plus-list-icon" style="background:rgba(251,188,5,.12);">
+              <svg viewBox="0 0 24 24" stroke="#FBBC05"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            </div>
+            <div class="plus-list-txt">
+              <div class="plus-list-title">Générer une image</div>
+              <div class="plus-list-sub">Crée et modifie des illustrations avec l'IA</div>
+            </div>
+          </div>
+          <div class="plus-list-item" onclick="plusAction('canvas');closePlusMenu()">
+            <div class="plus-list-icon" style="background:rgba(66,133,244,.12);">
+              <svg viewBox="0 0 24 24" stroke="#4285F4"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
+            </div>
+            <div class="plus-list-txt">
+              <div class="plus-list-title">Canvas</div>
+              <div class="plus-list-sub">Code, rédaction ou diaporamas en direct</div>
+            </div>
+            <span class="plus-list-badge">Nouveau</span>
+          </div>
+          <div class="plus-list-item" onclick="plusAction('deep-research');closePlusMenu()">
+            <div class="plus-list-icon" style="background:rgba(52,168,83,.12);">
+              <svg viewBox="0 0 24 24" stroke="#34A853"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>
+            </div>
+            <div class="plus-list-txt">
+              <div class="plus-list-title">Deep Research</div>
+              <div class="plus-list-sub">Rapports détaillés et analyses approfondies</div>
+            </div>
+          </div>
+          <div class="plus-list-item" onclick="plusAction('learning');closePlusMenu()">
+            <div class="plus-list-icon" style="background:rgba(234,67,53,.12);">
+              <svg viewBox="0 0 24 24" stroke="#EA4335"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+            </div>
+            <div class="plus-list-txt">
+              <div class="plus-list-title">Apprentissage guidé</div>
+              <div class="plus-list-sub">Aide étape par étape sur tes cours</div>
+            </div>
+          </div>
+          <div class="plus-list-item" onclick="openLiveMode();closePlusMenu()">
+            <div class="plus-list-icon" style="background:rgba(107,70,193,.12);">
+              <svg viewBox="0 0 24 24" stroke="#6B46C1"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/></svg>
+            </div>
+            <div class="plus-list-txt">
+              <div class="plus-list-title">Mode Live</div>
+              <div class="plus-list-sub">Conversation vocale en temps réel avec Amina</div>
+            </div>
+            <span class="plus-list-badge" style="background:rgba(107,70,193,.15);color:#6B46C1;border-color:rgba(107,70,193,.3);">Live</span>
+          </div>
+        </div>
       </div>
     </div>
     <input type="file" id="aiFileInput" style="display:none" onchange="handleAiFile(event)"/>
@@ -1275,7 +1538,7 @@ body.dark .about-hero{background:linear-gradient(135deg,#1A1D27,#22263A);}
       <div class="aibar-btns">
         <div class="aibar-btns-l">
           <!-- + en bas à gauche -->
-          <button class="aibar-iconbtn" onclick="toggleAttachMenu()" title="Joindre">
+          <button class="aibar-iconbtn" onclick="openPlusMenu()" title="Plus">
             <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           </button>
         </div>
@@ -1862,26 +2125,35 @@ function clearChat(){
 
 function openAI(){
   document.getElementById('aiPanel').classList.add('open');
-  const msgs=document.getElementById('aiMsgs');
+  // Petite pause pour que le panel soit visible
+  setTimeout(function(){
+  var msgs=document.getElementById('aiMsgs');
+  if(!msgs) return;
   if(msgs.children.length===0){
-    // Restaurer l'historique depuis la mémoire
-    if(aiHistory.length>0){
-      aiHistory.forEach(m=>{
-        const d=document.createElement('div');
+    if(aiHistory && aiHistory.length>0){
+      aiHistory.forEach(function(m){
+        var d=document.createElement('div');
         d.className='aimsg '+(m.role==='user'?'user':'bot');
-        const t=new Date();
+        var t=new Date();
+        var hh=t.getHours().toString().padStart(2,'0');
+        var mm=t.getMinutes().toString().padStart(2,'0');
         if(m.role==='bot'){
-          d.innerHTML=`<div class="aibub">${formatAIText(m.text)}</div><div class="aitime">${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')}</div>`;
+          d.innerHTML='<div class="aibub">'+formatAIText(m.text)+'</div><div class="aitime">'+hh+':'+mm+'</div>';
         } else {
-          d.innerHTML=`<div class="aibub">${m.text.replace(/\n/g,'<br>')}</div><div class="aitime">${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')}</div>`;
+          d.innerHTML='<div class="aibub">'+m.text.replace(/\n/g,'<br>')+'</div><div class="aitime">'+hh+':'+mm+'</div>';
         }
         msgs.appendChild(d);
       });
       msgs.scrollTop=msgs.scrollHeight;
+      hideAminaWelcome();
     } else {
-      addBotMsg("Salut ! 😊 Je suis **Amina**, ton assistante scolaire. Je suis là pour t'aider avec tout — tes exercices, tes cours, tes dissertations, ou juste si tu as une question. Par quoi on commence ?");
+      // Afficher la page d accueil style Gemini
+      showAminaWelcome();
     }
+  } else {
+    hideAminaWelcome();
   }
+  }, 50);
 }
 function closeAI(){document.getElementById('aiPanel').classList.remove('open');stopSpeak();}
 
@@ -2077,6 +2349,7 @@ async function sendAI(){
   if(!msg&&pendingAttachments.length===0)return;
   if(!msg)msg='Voici le fichier joint :';
   inp.value='';inp.style.height='auto';
+  hideAminaWelcome();
 
   // Detection demande d'image
   var isImgReq = /genere|dessine|cree.*(image)|montre.*(image|photo|illustration)|image de|photo de|illustr/i.test(msg);
@@ -2450,6 +2723,103 @@ function handleSendBtn() {
   }
 }
 
+// ══════════════════════════════════════════
+//  VOIX AMINA — ElevenLabs (qualité pro) + fallback navigateur
+//  ElevenLabs offre 10 000 chars/mois gratuits
+//  Voix: Sarah (fr) ou Amina custom
+// ══════════════════════════════════════════
+var ELEVEN_VOICE_ID = 'pqHfZKP75CvOlQylNhV4'; // Virginie Faup — Soft & Melodic French Voice
+var ELEVEN_API_KEY  = 'sk_c835b126eef6115431f373d359a3b1c4af9a958d33fc5d4e'; // ElevenLabs Amina voice
+var aminaAudioQueue = [];
+var aminaCurrentAudio = null;
+
+function stopSpeak() {
+  // Arrêter ElevenLabs
+  if (aminaCurrentAudio) {
+    aminaCurrentAudio.pause();
+    aminaCurrentAudio = null;
+  }
+  aminaAudioQueue = [];
+  // Arrêter le TTS navigateur
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+  var sp = document.getElementById('aiSpeak');
+  if (sp) sp.classList.remove('show');
+  setSendBtn('send');
+  currentUtterance = null;
+}
+
+async function speakWithElevenLabs(text) {
+  if (!ELEVEN_API_KEY) return false;
+
+  // Voix à essayer dans l'ordre
+  var voiceIds = [
+    ELEVEN_VOICE_ID,
+    'pqHfZKP75CvOlQylNhV4', // Virginie Faup
+    'XrExE9yKIg1WjnnlVkGX', // Charlotte FR
+    'EXAVITQu4vr4xnSDxMaL'  // Sarah
+  ];
+
+  for (var vi = 0; vi < voiceIds.length; vi++) {
+    try {
+      var resp = await fetch('https://api.elevenlabs.io/v1/text-to-speech/' + voiceIds[vi], {
+        method: 'POST',
+        headers: {
+          'xi-api-key': ELEVEN_API_KEY,
+          'Content-Type': 'application/json',
+          'Accept': 'audio/mpeg'
+        },
+        body: JSON.stringify({
+          text: text.slice(0, 2500), // Limite sécurité crédits
+          model_id: 'eleven_flash_v2_5',
+          language_code: 'fr',
+          voice_settings: {
+            stability: 0.55,
+            similarity_boost: 0.88,
+            style: 0.15,
+            use_speaker_boost: true
+          }
+        })
+      });
+
+      if (!resp.ok) {
+        console.warn('ElevenLabs voix', voiceIds[vi], 'status:', resp.status);
+        continue;
+      }
+
+      var blob = await resp.blob();
+      if (blob.size < 100) continue; // Réponse vide
+
+      var url = URL.createObjectURL(blob);
+      var audio = new Audio(url);
+      aminaCurrentAudio = audio;
+
+      var sp = document.getElementById('aiSpeak');
+      if (sp) sp.classList.add('show');
+      setSendBtn('stop');
+
+      audio.onended = function() {
+        URL.revokeObjectURL(url);
+        aminaCurrentAudio = null;
+        if (sp) sp.classList.remove('show');
+        setSendBtn('send');
+      };
+      audio.onerror = function() {
+        aminaCurrentAudio = null;
+        setSendBtn('send');
+        if (sp) sp.classList.remove('show');
+      };
+
+      await audio.play();
+      return true; // Succès
+
+    } catch(e) {
+      console.warn('ElevenLabs voix', voiceIds[vi], ':', e.message);
+    }
+  }
+
+  return false; // Toutes les voix ont échoué
+}
+
 // Nettoyage approfondi du texte avant lecture
 function cleanForSpeech(raw) {
   return raw
@@ -2499,11 +2869,17 @@ function getBestVoice() {
 }
 
 function speakText(text) {
-  if (!window.speechSynthesis) return;
-  stopSpeak();
   var clean = cleanForSpeech(text);
   if (!clean) return;
+  stopSpeak();
+  // Tenter ElevenLabs (haute qualité) d'abord
+  speakWithElevenLabs(clean).then(function(success) {
+    if (!success) speakWithBrowser(clean);
+  });
+}
 
+function speakWithBrowser(clean) {
+  if (!window.speechSynthesis) return;
   function doSpeak() {
     currentUtterance = new SpeechSynthesisUtterance(clean);
     currentUtterance.lang = 'fr-FR';
@@ -2532,6 +2908,7 @@ function speakText(text) {
   if (voices.length) { doSpeak(); }
   else { window.speechSynthesis.onvoiceschanged = function(){ doSpeak(); }; }
 }
+
 function stopSpeak(){
   if(window.speechSynthesis) window.speechSynthesis.cancel();
   var sp = document.getElementById('aiSpeak');
@@ -2592,6 +2969,224 @@ function checkForUpdate() {
     });
 }
 
+
+
+// ══════════════════════════════════════════
+//  PAGE ACCUEIL AMINA
+// ══════════════════════════════════════════
+function showAminaWelcome() {
+  var w = document.getElementById('aminaWelcome');
+  var m = document.getElementById('aiMsgs');
+  var sugs = document.getElementById('aiSugs');
+  if (w) { w.classList.remove('aw-hidden'); }
+  if (m) { m.classList.add('msgs-hidden'); }
+  if (sugs) sugs.style.display = 'none';
+
+  // Afficher le prenom
+  var nameEl = document.getElementById('aminaGreetName');
+  if (nameEl) {
+    var name = '';
+    try {
+      var u = firebase.auth().currentUser;
+      if (u && u.displayName) name = u.displayName.split(' ')[0];
+    } catch(e){}
+    if (!name && window.currentUserData) name = (window.currentUserData.name||'').split(' ')[0];
+    nameEl.textContent = name || 'toi';
+  }
+}
+
+function hideAminaWelcome() {
+  var w = document.getElementById('aminaWelcome');
+  var m = document.getElementById('aiMsgs');
+  var sugs = document.getElementById('aiSugs');
+  if (w) { w.classList.add('aw-hidden'); }
+  if (m) { m.classList.remove('msgs-hidden'); }
+  if (sugs) sugs.style.display = '';
+}
+
+function startSuggestion(text) {
+  hideAminaWelcome();
+  var inp = document.getElementById('aiInput');
+  if (inp) {
+    inp.value = text;
+    inp.focus();
+    // Envoyer apres un court délai pour que l UI s actualise
+    setTimeout(function(){ sendAI(); }, 100);
+  }
+}
+
+// ══════════════════════════════════════════
+//  MENU + STYLE GEMINI
+// ══════════════════════════════════════════
+function openPlusMenu() {
+  var ov = document.getElementById('plusMenuOverlay');
+  if (ov) ov.classList.add('show');
+}
+function closePlusMenu(e) {
+  // Si appelé avec event, fermer seulement si click sur l overlay lui-même
+  if (e && e.target && e.target.id !== 'plusMenuOverlay') return;
+  var ov = document.getElementById('plusMenuOverlay');
+  if (ov) ov.classList.remove('show');
+}
+
+function plusAction(type) {
+  // Fermer le menu d abord
+  var ov = document.getElementById('plusMenuOverlay');
+  if (ov) ov.classList.remove('show');
+  // Masquer la page d accueil
+  hideAminaWelcome();
+
+  var inp = document.getElementById('aiInput');
+
+  if (type === 'photo') {
+    triggerAttach('image/*,video/*');
+  } else if (type === 'camera') {
+    if (typeof triggerCamera === 'function') triggerCamera();
+    else triggerAttach('image/*');
+  } else if (type === 'file') {
+    triggerAttach('.pdf,.doc,.docx,.txt,.ppt,.pptx,.xls,.xlsx');
+  } else if (type === 'drive') {
+    toast('Google Drive — Bientot disponible !');
+  } else if (type === 'notebook') {
+    if (typeof showPage === 'function') showPage('notes');
+  } else if (type === 'image-gen') {
+    if (inp) { inp.value = 'Genere une image de '; inp.focus(); }
+  } else if (type === 'canvas') {
+    if (inp) { inp.value = 'Cree une application HTML CSS JS complete : '; inp.focus(); }
+  } else if (type === 'deep-research') {
+    if (inp) { inp.value = 'Fais une recherche approfondie sur : '; inp.focus(); }
+  } else if (type === 'learning') {
+    if (inp) { inp.value = 'Explique-moi etape par etape : '; inp.focus(); }
+  }
+}
+
+// ══════════════════════════════════════════
+//  MODE LIVE AMINA
+// ══════════════════════════════════════════
+var liveRecognition = null;
+var liveIsListening = false;
+var liveLastResponse = '';
+
+function openLiveMode() {
+  var ov = document.getElementById('liveOverlay');
+  if (ov) ov.classList.add('show');
+  document.getElementById('liveTranscript').innerHTML = '';
+  setLiveStatus('Appuie sur le micro pour parler', 'Amina ecoute en temps reel');
+}
+
+function closeLiveMode() {
+  stopLiveMic();
+  var ov = document.getElementById('liveOverlay');
+  if (ov) ov.classList.remove('show');
+}
+
+function setLiveStatus(main, sub) {
+  var s = document.getElementById('liveStatus');
+  var ss = document.getElementById('liveStatusSub');
+  if (s) s.textContent = main;
+  if (ss) ss.textContent = sub || '';
+}
+
+function addLiveMsg(text, isUser) {
+  var t = document.getElementById('liveTranscript');
+  if (!t) return;
+  var d = document.createElement('div');
+  d.className = 'live-msg' + (isUser ? ' user' : '');
+  d.textContent = text;
+  t.appendChild(d);
+  t.scrollTop = t.scrollHeight;
+}
+
+function toggleLiveMic() {
+  if (liveIsListening) { stopLiveMic(); return; }
+  startLiveMic();
+}
+
+function startLiveMic() {
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { toast('Reconnaissance vocale non disponible sur ce navigateur'); return; }
+
+  liveRecognition = new SR();
+  liveRecognition.lang = 'fr-FR';
+  liveRecognition.continuous = false;
+  liveRecognition.interimResults = true;
+
+  var btn = document.getElementById('liveMicBtn');
+  var star = document.getElementById('liveStarBig');
+
+  liveRecognition.onstart = function() {
+    liveIsListening = true;
+    if (btn) btn.classList.add('active');
+    if (star) star.classList.add('listening');
+    setLiveStatus("Je t'ecoute...", "Parle maintenant");
+  };
+
+  liveRecognition.onresult = function(e) {
+    var transcript = '';
+    for (var i = e.resultIndex; i < e.results.length; i++) {
+      transcript += e.results[i][0].transcript;
+    }
+    setLiveStatus(transcript, 'Traitement en cours...');
+    if (e.results[e.results.length-1].isFinal && transcript.trim()) {
+      addLiveMsg(transcript, true);
+      processLiveMessage(transcript.trim());
+    }
+  };
+
+  liveRecognition.onend = function() {
+    liveIsListening = false;
+    if (btn) btn.classList.remove('active');
+    if (star) star.classList.remove('listening');
+    if (document.getElementById('liveOverlay').classList.contains('show') && !liveIsListening) {
+      setLiveStatus("Appuie sur le micro pour parler", "");
+    }
+  };
+
+  liveRecognition.onerror = function(e) {
+    liveIsListening = false;
+    if (btn) btn.classList.remove('active');
+    if (star) star.classList.remove('listening');
+    setLiveStatus("Erreur micro : " + e.error, "Reessaie");
+  };
+
+  liveRecognition.start();
+}
+
+function stopLiveMic() {
+  if (liveRecognition) { try { liveRecognition.stop(); } catch(e){} liveRecognition = null; }
+  liveIsListening = false;
+  var btn = document.getElementById('liveMicBtn');
+  var star = document.getElementById('liveStarBig');
+  if (btn) btn.classList.remove('active');
+  if (star) star.classList.remove('listening');
+}
+
+async function processLiveMessage(text) {
+  setLiveStatus("Amina reflechit...", "");
+  var star = document.getElementById('liveStarBig');
+  if (star) star.style.animation = 'starSpin 1.5s linear infinite';
+  try {
+    var response = await callAnthropicAPI(text);
+    var clean = response.replace(/<[^>]*>/g, '').replace(/\*\*(.*?)\*\*/g, '$1');
+    liveLastResponse = clean;
+    addLiveMsg(clean.slice(0, 300) + (clean.length > 300 ? '...' : ''), false);
+    setLiveStatus("Amina repond...", '');
+    if (star) star.style.animation = 'starSpin 6s linear infinite';
+    speakText(clean);
+  } catch(e) {
+    setLiveStatus("Erreur de connexion", "Verifie ta connexion internet");
+    if (star) star.style.animation = 'starSpin 6s linear infinite';
+  }
+}
+
+function liveShareLast() {
+  if (!liveLastResponse) { toast('Aucune reponse a partager'); return; }
+  if (navigator.share) {
+    navigator.share({ title: 'Reponse Amina', text: liveLastResponse });
+  } else {
+    navigator.clipboard.writeText(liveLastResponse).then(function(){ toast('Reponse copiee !'); });
+  }
+}
 
 // ══════════════════════════════════════════
 //  MÉMOIRE LONGUE DURÉE D'AMINA
@@ -3437,6 +4032,28 @@ setTimeout(()=>{
     <button class="img-fs-btn" onclick="imgFsRetry()">
       <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
       Reessayer
+    </button>
+  </div>
+</div>
+
+<!-- LIVE MODE HTML -->
+<div class="live-overlay" id="liveOverlay">
+  <div class="live-header"><div class="live-title">AMINA LIVE</div></div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:16px;padding-top:20px;">
+    <div class="live-star-big" id="liveStarBig"></div>
+    <div class="live-status" id="liveStatus">Appuie sur le micro pour parler</div>
+    <div class="live-status-sub" id="liveStatusSub">Amina t'ecoute en temps reel</div>
+  </div>
+  <div class="live-transcript" id="liveTranscript"></div>
+  <div class="live-actions">
+    <button class="live-btn live-btn-share" onclick="liveShareLast()">
+      <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    </button>
+    <button class="live-btn live-btn-mic" id="liveMicBtn" onclick="toggleLiveMic()">
+      <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+    </button>
+    <button class="live-btn live-btn-close" onclick="closeLiveMode()">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
   </div>
 </div>
