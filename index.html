@@ -1347,7 +1347,27 @@ body.dark .about-hero{background:linear-gradient(135deg,#1A1D27,#22263A);}
 
   <div class="about-hero">
     <div class="about-logo">Mon Assistant Scolaires</div>
-    <div class="about-ver" id="appVersionDisplay">Version 1.1.0</div>
+    <!-- CARTE AGENT MISTRAL -->
+<div class="about-dev" style="margin-bottom:10px" id="mistralAgentCard">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+    <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#FF6B35,#FF9A5C);display:flex;align-items:center;justify-content:center;font-size:1rem">🤖</div>
+    <div>
+      <div style="font-size:.82rem;font-weight:900;color:var(--text)">Agent Mistral CI</div>
+      <div style="font-size:.65rem;color:var(--muted)">Spécialisé programme scolaire ivoirien</div>
+    </div>
+    <div id="mistralAgentStatus" style="margin-left:auto;font-size:.6rem;font-weight:800;padding:2px 8px;border-radius:99px;background:rgba(255,107,53,.1);color:var(--accent)">Non configuré</div>
+  </div>
+  <div style="display:flex;gap:6px;align-items:center">
+    <input id="mistralKeyInput" type="password" placeholder="Clé API Mistral (sk-...)" 
+      style="flex:1;padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.75rem">
+    <button onclick="saveMistralKey()" style="padding:8px 12px;border-radius:8px;background:var(--accent);color:#fff;border:none;font-size:.72rem;font-weight:800;cursor:pointer">Sauver</button>
+  </div>
+  <div style="font-size:.62rem;color:var(--muted);margin-top:6px">
+    L'agent Mistral est spécialisé pour le programme DPFC-CI. Il répond avec précision aux questions sur les cours officiels.
+  </div>
+</div>
+
+<div class="about-ver" id="appVersionDisplay">Version 1.1.0</div>
     <div id="updateBanner" style="margin:10px 0 0;padding:10px 14px;border-radius:10px;background:linear-gradient(90deg,rgba(0,200,150,.1),rgba(79,142,247,.08));border:1px solid rgba(0,200,150,.25);display:flex;align-items:center;gap:10px;cursor:pointer;" onclick="checkForUpdate()">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00C896" stroke-width="2.5" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
     <div style="flex:1;">
@@ -2022,28 +2042,55 @@ function setNFil(n){niveauFilter=niveauFilter===n?null:n;renderCours();}
 //  COURS PDF — fichiers visuels complets (tableaux + graphiques)
 //  1ères C/D Mathématiques — École Numérique CI
 // ══════════════════════════════════════════
+var GITHUB_COURS_BASE = "https://marcelaagbassi-create.github.io/Cours-mon-assistant-scolaires-/";
 var PDF_COURS_URLS = {
   "Premi\u00e8re": {
     "Maths": {
-      "\u00c9quations et in\u00e9quations du second degr\u00e9 dans IR": "lesson_00_\u00c9quations_et_in\u00e9quations_du_second_degr\u00e9.html",
-      "G\u00e9n\u00e9ralit\u00e9s sur les fonctions": "lesson_01_G\u00e9n\u00e9ralit\u00e9s_sur_les_fonctions.html",
-      "Limites et continuit\u00e9": "lesson_02_Limites_et_continuit\u00e9.html",
-      "Probabilit\u00e9": "lesson_03_Probabilit\u00e9.html",
-      "D\u00e9nombrement": "lesson_04_D\u00e9nombrement.html",
-      "Extension de la notion de limite I": "lesson_05_Extension_de_la_notion_de_limite_I.html",
-      "Extension de la notion de limite II": "lesson_06_Extension_de_la_notion_de_limite_II.html",
-      "\u00c9tude et repr\u00e9sentation graphique d\'une fonction": "lesson_07_\u00c9tude_et_repr\u00e9sentation_graphique_dune_f.html",
-      "Angles orient\u00e9s et trigonom\u00e9trie": "lesson_08_Angles_orient\u00e9s_et_trigonom\u00e9trie.html",
-      "Syst\u00e8mes d\'\u00e9quations lin\u00e9aires": "lesson_09_Syst\u00e8mes_d\u00e9quations_lin\u00e9aires.html",
-      "Suites num\u00e9riques": "lesson_10_Suites_num\u00e9riques.html",
-      "Orthogonalit\u00e9 dans l\'espace": "lesson_11_Orthogonalit\u00e9_dans_lespace.html",
-      "Statistiques": "lesson_12_Statistiques.html"
+      "\u00c9quations et in\u00e9quations du second degr\u00e9 dans IR": "lecon_01_Equations_et_inequations_du_second_degre.html",
+      "G\u00e9n\u00e9ralit\u00e9s sur les fonctions": "lecon_03_Generalites_sur_les_fonctions.html",
+      "Limites et continuit\u00e9": "lecon_02_Limites_et_continuite.html",
+      "Probabilit\u00e9": "lecon_05_Probabilite.html",
+      "D\u00e9nombrement": "lecon_04_Denombrement.html",
+      "Extension de la notion de la limite I": "lecon_07_Extension_de_la_notion_de_la_limite_I.html",
+      "Extension de la notion de la limite II": "lecon_08_Extension_de_la_notion_de_la_limite_II.html",
+      "\u00c9tude et repr\u00e9sentation graphique d\'une fonction": "lecon_09_Etude_et_representation_graphique_d_une_.html",
+      "Angles orient\u00e9s et trigonom\u00e9trie": "lecon_10_Angles_orientes_et_trigonometrie.html",
+      "Syst\u00e8mes d\'\u00e9quations lin\u00e9aires": "lecon_13_Systemes_d_equations_lineaires.html",
+      "Suites num\u00e9riques": "lecon_12_Suites_numeriques.html",
+      "Orthogonalit\u00e9 dans l\'espace": "lecon_11_Orthogonalite_dans_l_espace.html",
+      "Statistiques": "lecon_15_Statistiques.html",
+      "D\u00e9rivation": "lecon_06_Derivation.html"
+    }
+  },
+  "Premi\u00e8re D": {
+    "Maths": {
+      "\u00c9quations et in\u00e9quations du second degr\u00e9 dans IR": "lecon_01_Equations_et_inequations_du_second_degre.html",
+      "D\u00e9nombrement": "lecon_04_Denombrement.html",
+      "G\u00e9n\u00e9ralit\u00e9s sur les fonctions": "lecon_03_Generalites_sur_les_fonctions.html",
+      "Probabilit\u00e9": "lecon_05_Probabilite.html",
+      "D\u00e9rivation": "lecon_06_Derivation.html",
+      "Suites num\u00e9riques": "lecon_12_Suites_numeriques.html",
+      "Statistiques": "lecon_15_Statistiques.html"
+    }
+  },
+  "Premi\u00e8re C": {
+    "Maths": {
+      "\u00c9quations et in\u00e9quations du second degr\u00e9 dans IR": "lecon_01_Equations_et_inequations_du_second_degre.html",
+      "Limites et continuit\u00e9": "lecon_02_Limites_et_continuite.html",
+      "G\u00e9n\u00e9ralit\u00e9s sur les fonctions": "lecon_03_Generalites_sur_les_fonctions.html",
+      "Probabilit\u00e9": "lecon_05_Probabilite.html",
+      "D\u00e9rivation": "lecon_06_Derivation.html",
+      "Angles orient\u00e9s et trigonom\u00e9trie": "lecon_10_Angles_orientes_et_trigonometrie.html",
+      "Statistiques": "lecon_15_Statistiques.html"
     }
   }
 };
 
 // Ouvrir un cours PDF dans un overlay plein écran
 function openPDFCours(url, titre) {
+  // Construire l'URL complète GitHub Pages si ce n'est pas déjà une URL absolue
+  var fullUrl = url.startsWith('http') ? url : (GITHUB_COURS_BASE + url);
+  url = fullUrl;
   var overlay = document.createElement('div');
   overlay.id = 'pdfViewer';
   overlay.style.cssText = 'position:fixed;inset:0;z-index:9000;background:#000;display:flex;flex-direction:column;';
@@ -2684,9 +2731,14 @@ const ALVACOA_URL = 'https://alvacoa-api.onrender.com/chat';
 const AI_MODELS = {
   'claude-3.5-sonnet': { label: 'Claude',   color: '#6B46C1', chip: 'mchip-claude'   },
   'mistral-small':     { label: 'Mistral',  color: '#FF6B35', chip: 'mchip-mistral'  },
+  'mistral-agent':     { label: 'Agent CI', color: '#FF6B35', chip: 'mchip-mistral'  },
   'deepseek-chat-v2':  { label: 'DeepSeek', color: '#4F8EF7', chip: 'mchip-deepseek' },
   'gemini-2.0-flash':  { label: 'Gemini',   color: '#00C896', chip: 'mchip-gemini'   },
 };
+
+// Agent Mistral dedie a Mon Assistant Scolaires CI
+var MISTRAL_AGENT_ID = "ag_019e759c600175bea24b4ecae0cb74be";
+var MISTRAL_AGENT_URL = "https://api.mistral.ai/v1/agents/completions";
 
 // Ordre de fallback automatique si un modèle échoue
 const FALLBACK_ORDER = ['claude-3.5-sonnet','mistral-small','deepseek-chat-v2','gemini-2.0-flash'];
@@ -2714,6 +2766,38 @@ function selectModel(modelKey) {
 
   addBotMsg("Modele change : je suis maintenant propulsee par **" + cfg.label + "** ! Comment puis-je t\'aider ?", true);
   toast("Modele : " + cfg.label);
+}
+
+// Appel direct à l'agent Mistral (si clé disponible)
+async function callMistralAgent(userMessage) {
+  var apiKey = localStorage.getItem('mistral_api_key') || '';
+  if (!apiKey) return null;
+  try {
+    var r = await Promise.race([
+      fetch(MISTRAL_AGENT_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + apiKey
+        },
+        body: JSON.stringify({
+          agent_id: MISTRAL_AGENT_ID,
+          messages: [{ role: 'user', content: userMessage }],
+          max_tokens: 2000
+        })
+      }),
+      new Promise(function(_,rej){ setTimeout(function(){ rej(new Error('timeout')); }, 20000); })
+    ]);
+    if (!r.ok) return null;
+    var d = await r.json();
+    if (d && d.choices && d.choices[0] && d.choices[0].message) {
+      return d.choices[0].message.content;
+    }
+    return null;
+  } catch(e) {
+    console.warn('[MistralAgent]', e.message);
+    return null;
+  }
 }
 
 async function callALVACOA(userMessage, modelKey) {
@@ -2764,7 +2848,14 @@ async function callALVACOA(userMessage, modelKey) {
 function detectBestModel(msg) {
   var m = msg.toLowerCase();
 
-  // Score chaque modele selon la pertinence de la demande
+  // Questions sur le programme CI → Agent Mistral en priorité
+  var ciKeywords = ['premiere', 'terminale', 'bac', 'bepc', 'programme ci', 'lycee', 'college',
+    'dpfc', 'ecole numerique', 'ivoirien', 'cote d', 'abidjan', 'lecon', 'chapitre du cours'];
+  var isCIQuestion = ciKeywords.some(function(kw){ return m.indexOf(kw) >= 0; });
+  if (isCIQuestion && localStorage.getItem('mistral_api_key')) {
+    return 'mistral-agent';
+  }
+
   var scores = {
     'claude-3.5-sonnet': 0,
     'deepseek-chat-v2': 0,
@@ -2837,6 +2928,15 @@ async function callAnthropicAPI(userMessage) {
   for (var i = 0; i < tryOrder.length; i++) {
     var modelKey = tryOrder[i];
     try {
+      // Cas spécial: agent Mistral CI
+      if (modelKey === 'mistral-agent') {
+        var agentResp = await callMistralAgent(userMessage);
+        if (agentResp) {
+          if (switched && i === 0) selectModelSilent('mistral-small');
+          return agentResp;
+        }
+        continue; // fallback si agent indisponible
+      }
       var result = await callALVACOA(userMessage, modelKey);
       var text = result.text;
       // Sauvegarder en mémoire longue durée
@@ -3204,6 +3304,46 @@ function stopSpeak(){
   currentUtterance = null;
 }
 
+
+
+// ── Config Agent Mistral ──
+function saveMistralKey() {
+  var key = document.getElementById('mistralKeyInput').value.trim();
+  if (!key) {
+    localStorage.removeItem('mistral_api_key');
+    updateMistralStatus();
+    toast('Clé Mistral supprimée');
+    return;
+  }
+  localStorage.setItem('mistral_api_key', key);
+  document.getElementById('mistralKeyInput').value = '';
+  updateMistralStatus();
+  toast('✅ Agent Mistral CI activé !');
+}
+
+function updateMistralStatus() {
+  var el = document.getElementById('mistralAgentStatus');
+  if (!el) return;
+  var hasKey = !!localStorage.getItem('mistral_api_key');
+  if (hasKey) {
+    el.textContent = '✓ Actif';
+    el.style.background = 'rgba(0,200,150,.12)';
+    el.style.color = 'var(--a2)';
+  } else {
+    el.textContent = 'Non configuré';
+    el.style.background = 'rgba(255,107,53,.1)';
+    el.style.color = 'var(--accent)';
+  }
+}
+
+// Initialiser au chargement
+document.addEventListener('DOMContentLoaded', function() {
+  updateMistralStatus();
+  var inp = document.getElementById('mistralKeyInput');
+  if (inp && localStorage.getItem('mistral_api_key')) {
+    inp.placeholder = 'Clé configurée (•••••)';
+  }
+});
 
 // ══════════════════════════════════════════
 //  SYSTEME DE MISE A JOUR
